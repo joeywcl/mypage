@@ -7,6 +7,11 @@
 
     <title>Joey's Work Portfolio</title>
 
+    <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="img/favicon/site.webmanifest">
+
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
@@ -14,8 +19,7 @@
     <link rel="stylesheet" href="css/style.css">
 
     <!-- Devicons -->
-    <link rel="stylesheet" href="css/devicon.css">
-    <link rel="stylesheet" href="css/devicon-colors.css">
+    <link rel="stylesheet" href="css/devicon.min.css">
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -34,7 +38,7 @@
 
         <!-- side content -->
         <div class="col-sm-3 about-me about-side text-center hidden-xs">
-            <img src="img/profile-photo.jpg" width=200 class="profile-pic img-responsive center-block">
+            <img src="img/profile-photo.jpg" width=200 class="profile-pic img-responsive center-block" alt="My profile image">
             <h1>Joey Wong</h1>
             <h2>Frontend Developer</h2>
 
@@ -64,20 +68,25 @@
             <div class="row work-item-row">
                 <div class="col-sm-8 col-sm-offset-2 project">
 
-                    <img src="img/portal.png" class="img-responsive">
+                    <img src="img/dcwiz.png" class="img-responsive" alt="Screenshot of the DCWiz App">
 
-                    <h2 class="text-center">Client Portal</h2>
-                    <p>A Web Portal for users to retrieve statements, to view royalties data and insights. This is a
-                        collaborative task where I have contributed on re-branding of the portal, support monthly maintenance and enhancement of new
-                        features.</p>
+                    <h2 class="text-center">Data Center Application (DCWiz)</h2>
+                    <p>An integrated industrial AI solution that optimises the operations of data centres</p>
                     <h4>Technology</h4>
-                    <p>Portal is build on AngularJS framework and uses Node.js as a middleware for handling API request.
-                        The login template is written in Thymeleaf while the graphical view uses D3.js and DataMaps.</p>
+                    <p>DCWiz is built with the Next.js framework and uses Material-UI for the UI components. Python is
+                        used for the backend services. Additional tools include Pydantic for data validation, Keycloak
+                        for authentication, and Cypress for UI/UX end-to-end testing.</p>
 
                     <div class="row text-center">
                         <div class="col-xs-12">
-                            <img src="img/tech/angular.png" class="techlogo" width="100">
-                            <img src="img/tech/node.png" class="techlogo" width="100">
+                            <div class="tech">
+                                <i class="devicon-nextjs-plain-wordmark colored"></i>
+                                <div class="tech-icon">
+                                    <i class="devicon-materialui-plain colored"></i>
+                                    <div class="tooltip">Material-UI</div>
+                                </div>
+                                <i class="devicon-python-plain-wordmark"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -86,13 +95,45 @@
             <div class="row work-item-row">
                 <div class="col-sm-8 col-sm-offset-2 project">
 
-                    <img src="img/myanalytics.png" class="img-responsive">
+                    <img src="img/portal.png" class="img-responsive" alt="Screenshot of the Portal App">
+
+                    <h2 class="text-center">Client Portal</h2>
+                    <p>A Web Portal for users to retrieve statements, to view royalties data and insights. This is a
+                        collaborative task where I have contributed on re-branding of the portal, support monthly
+                        maintenance and enhancement of new
+                        features.</p>
+                    <h4>Technology</h4>
+                    <p>Portal is build on AngularJS framework and uses Node.js as a middleware for handling API request.
+                        The login template is written in Thymeleaf while the graphical view uses D3.js and DataMaps.</p>
+
+                    <div class="row text-center">
+                        <div class="col-xs-12">
+                            <div class="tech">
+                                <div class="tech-icon">
+                                    <i class="devicon-angularjs-plain colored"></i>
+                                    <div class="tooltip">AngularJs</div>
+                                </div>
+                                <div class="tech-icon">
+                                    <i class="devicon-nodejs-plain colored"></i>
+                                    <div class="tooltip">Node.js</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row work-item-row">
+                <div class="col-sm-8 col-sm-offset-2 project">
+
+                    <img src="img/myanalytics.png" class="img-responsive" alt="Screenshot of the Analytics App">
 
                     <h2 class="text-center"><a
                             href="https://play.google.com/store/apps/details?id=com.warnerchappell.clientmusicportal&hl=en_US&gl=US"
                             target="blank">Analytics</a></h2>
                     <p>An Android application based on Client Portal for users to access their royalties on the go. I
-                        have contributed on the development of an unfinished build, release and enhancement of new pipeline
+                        have contributed on the development of an unfinished build, release and enhancement of new
+                        pipeline
                         feature.</p>
                     <h4>Technology</h4>
                     <p>Analytics is build with Android Java and Retrofit HTTP Client.</p>
@@ -114,7 +155,7 @@
 
             <div class="row work-item-row">
                 <div class="col-sm-8 col-sm-offset-2 project">
-                    <img src="img/demoanalytics.png" class="img-responsive">
+                    <img src="img/demoanalytics.png" class="img-responsive" alt="Screenshot of the Demo Analytics App">
                     <h2 class="text-center">Demo App</h2>
                     <p>A cloned Android application of Analytics for internal demo purposes with added extra Login
                         layer.</p>
@@ -133,9 +174,31 @@
 
             <div class="row work-item-row">
                 <div class="col-sm-8 col-sm-offset-2 project">
-                    <img src="img/myweb.png" class="img-responsive">
-                    <h2 class="text-center">Landing/Static Page</h2>
+                    <img src="img/myweb.png" class="img-responsive" alt="Screenshot of various landing pages">
+                    <h2 class="text-center">Landing/Static Pages</h2>
                     <p>Landing pages and static website developed for various events.</p>
+                    <h4>Technology</h4>
+                    <p>This web pages were developed with basic stacks such as HTML, CSS, jQuery, Javascript and
+                        Bootstrap for responsiveness.</p>
+                    <div class="row text-center">
+                        <div class="col-xs-12">
+                            <div class="tech">
+                                <i class="devicon-html5-plain-wordmark colored"></i>
+                                <i class="devicon-css3-plain-wordmark colored"></i>
+                                <i class="devicon-javascript-plain"></i>
+                                <i class="devicon-bootstrap-plain-wordmark colored"></i>
+                                <i class="devicon-jquery-plain-wordmark colored"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row work-item-row">
+                <div class="col-sm-8 col-sm-offset-2 project">
+                    <img src="img/freelance.png" class="img-responsive" alt="Screenshot of the freelance projects microsites">
+                    <h2 class="text-center">Freelance projects</h2>
+                    <p>Microsites developed for a freelance project.</p>
                     <h4>Technology</h4>
                     <p>This web pages were developed with basic stacks such as HTML, CSS, jQuery, Javascript and
                         Bootstrap for responsiveness.</p>
@@ -157,18 +220,51 @@
                 <div class="col-sm-12 text-center">
 
                     <h3>Tools</h3>
-
-                    <img src="img/tool/icon-ws.png" class="techlogo" width="150">
-                    <img src="img/tool/git.png" class="techlogo" width="150">
-                    <img src="img/tool/androidstudio.png" class="techlogo" width="150">
-
+                    <div class="tech">
+                        <div class="tech-icon">
+                            <i class="devicon-intellij-plain colored"></i>
+                            <div class="tooltip">IntelliJ</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-visualstudio-plain colored"></i>
+                            <div class="tooltip">Visual Studio</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-git-plain colored"></i>
+                            <div class="tooltip">Git</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-githubactions-plain colored"></i>
+                            <div class="tooltip">GitHub Actions</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-figma-plain colored"></i>
+                            <div class="tooltip">Figma</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-jira-plain colored"></i>
+                            <div class="tooltip">Jira</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-postman-plain colored"></i>
+                            <div class="tooltip">Postman</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-fastapi-plain colored"></i>
+                            <div class="tooltip">FastAPI</div>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="devicon-androidstudio-plain colored"></i>
+                            <div class="tooltip">Android Studio</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="row row-footer text-center">
                 <div class="col">
                     <div style="margin:50px;">
-                        <p style="margin:50px 0 15px">© 2021 Joey Wong</p>
+                        <p style="margin:50px 0 15px">© 2025 Joey Wong</p>
                     </div>
                 </div>
             </div>
