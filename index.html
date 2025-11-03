@@ -1,306 +1,276 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Joey's Work Portfolio</title>
-
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Joey Wong – Frontend Developer</title>
+    <meta name="description" content="Frontend Developer in Singapore. Next.js, React, Material UI, Cypress, Python/Pydantic. Building data-driven UIs for enterprise apps and creative products." />
+    <meta property="og:title" content="Joey Wong – Frontend Developer" />
+    <meta property="og:description" content="Next.js, React, Material UI, Cypress, Python/Pydantic. Building data-driven UIs for enterprise apps and creative products." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="img/dcwiz.png" />
+    <meta name="theme-color" content="#0f172a" />
     <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
     <link rel="manifest" href="img/favicon/site.webmanifest">
-
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
-
-    <link rel="stylesheet" href="css/style.css">
-
-    <!-- Devicons -->
-    <link rel="stylesheet" href="css/devicon.min.css">
-
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- Leave those next 4 lines if you care about users using IE8 -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/modern.css">
 </head>
 <body>
-
-<div class="container main-container">
-
-    <div class="row">
-
-        <!-- side content -->
-        <div class="col-sm-3 about-me about-side text-center hidden-xs">
-            <img src="img/profile-photo.jpg" width=200 class="profile-pic img-responsive center-block"
-                 alt="My profile image">
-            <h1>Joey Wong (She/Her)</h1>
-            <h2>Frontend Developer</h2>
-
-            <div class="text-center" style="margin:20px">
-                <a href="https://www.linkedin.com/in/cheauling-wong/" class="cta-icon"><i
-                        class="devicon-linkedin-plain colored"></i></a>
-                <a href="https://github.com/joeywcl" class="cta-icon"><i class="devicon-github-plain colored"></i></a>
+    <header>
+        <div class="nav container">
+            <div class="brand">
+                <img class="avatar" src="img/profile-photo.jpg" alt="Joey profile" />
+                <h1>Joey Wong · Frontend Developer</h1>
+            </div>
+            <div class="links">
+                <a class="btn" href="mailto:jjowcl01@gmail.com">Email</a>
+                <a class="btn" href="https://www.linkedin.com/in/cheauling-wong/" target="_blank" rel="noopener">LinkedIn</a>
+                <a class="btn" href="https://github.com/joeywcl" target="_blank" rel="noopener">GitHub</a>
+                <button id="theme-toggle" class="btn" aria-label="Toggle dark/light theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+                <a class="btn btn-primary" href="Wong-Cheau-Ling-Resume.pdf" target="_blank" rel="noopener">Download Résumé</a>
             </div>
         </div>
+    </header>
 
-        <div class="text-center about-me hidden-sm hidden-md hidden-lg">
-            <img src="img/profile-photo.jpg" width=200 class="profile-pic img-responsive center-block">
-            <h1>Joey Wong</h1>
-            <h2>Frontend Developer</h2>
-
-            <div class="text-center" style="margin:20px">
-                <a href="https://www.linkedin.com/in/cheauling-wong/" class="cta-icon" target="_blank"><i
-                        class="devicon-linkedin-plain colored"></i></a>
-                <a href="https://github.com/joeywcl" class="cta-icon" target="_blank"><i
-                        class="devicon-github-plain colored"></i></a>
+    <main>
+        <section class="hero container">
+            <div>
+                <span class="chip">Singapore · Next.js · React · MUI · ApexCharts · Cypress · Python/Pydantic</span>
+                <h2>Building thoughtful, data-driven UIs that make complex systems feel simple.</h2>
+                <p>I'm a frontend engineer who started in gaming & music tech and now craft enterprise web apps for AI-powered data centre optimisation. I love clean interfaces, reliable testing, and UX that respects users.</p>
+                <div class="actions">
+                    <a class="btn btn-primary" href="#projects">See my work</a>
+                    <a class="btn" href="mailto:jjowcl01@gmail.com">Get in touch</a>
+                </div>
             </div>
-        </div>
-
-        <!-- main content -->
-        <div class="col-sm-9 col-sm-offset-3">
-
-            <div class="row work-item-row">
-                <div class="col-sm-8 col-sm-offset-2 project">
-
-                    <img src="img/dcwiz.png" class="img-responsive" alt="Screenshot of the DCWiz App">
-
-                    <h2 class="text-center">Data Center Application (DCWiz)</h2>
-                    <p>An integrated industrial AI solution that optimises the operations of data centres. I have
-                        contributed on refining initial mockups of specific modules within the application into
-                        finalized UI/UX design using Figma. Supported refactoring of the frontend tech stack to use
-                        Next.js and Material-UI. Contribute effectively on the maintenance and enhancement of new
-                        features throughout the development lifecycle.</p>
-                    <h4>Technology</h4>
-                    <p>DCWiz is built with the Next.js framework and uses Material-UI for the UI components. Python is
-                        used for the backend services. Additional tools include Pydantic for data validation, Keycloak
-                        for authentication, and Cypress for UI/UX end-to-end testing.</p>
-
-                    <div class="row text-center">
-                        <div class="col-xs-12">
-                            <div class="tech">
-                                <i class="devicon-nextjs-plain-wordmark colored"></i>
-                                <div class="tech-icon">
-                                    <i class="devicon-materialui-plain colored"></i>
-                                    <div class="tooltip">Material-UI</div>
-                                </div>
-                                <i class="devicon-python-plain-wordmark"></i>
-                                <div class="tech-icon">
-                                    <i class="devicon-figma-plain colored"></i>
-                                    <div class="tooltip">Figma</div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="hero-card">
+                <div class="hero-grid">
+                    <div>
+                        <div class="mini">Current Focus</div>
+                        <strong>Next.js, MUI, Design Systems, E2E Testing</strong>
+                    </div>
+                    <div>
+                        <div class="mini">Also Hands-on With</div>
+                        <strong>Python (Pydantic), Keycloak, GitHub Actions</strong>
+                    </div>
+                    <div>
+                        <div class="mini">What I Value</div>
+                        <strong>Clarity, maintainability, and empathetic UX</strong>
+                    </div>
+                    <div>
+                        <div class="mini">Collaboration</div>
+                        <strong>Cross-functional teamwork & design alignment</strong>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="row work-item-row">
-                <div class="col-sm-8 col-sm-offset-2 project">
+        <section class="container" id="about">
+            <div class="section-title">About</div>
+            <p>
+                I've shipped production features across data-heavy enterprise apps, artist portals, and Android apps.
+                I collaborate closely with product and research teams, translate ideas to Figma and code, and keep quality high with Cypress and CI.
+                Experienced in state management and API integration using RTK Query, and in implementing secure authentication flows with NextAuth and Keycloak.
+                Experienced in integrating REST and schema-validated APIs; familiar with federated data flows and GraphQL concepts.
+                Familiar with backend databases and deployment tools including Postgres, InfluxDB, and Ansible.
+                Previously the sole frontend for Garena Malaysia; later full-stack at Warner Music; now Research Engineer at NTU.
+            </p>
+            <div class="skills">
+                <div class="skill">
+                    <strong>Frontend</strong><br/>
+                    Next.js, React, MUI (DataGrid), ApexCharts, AngularJS, RTK Query, NextAuth, TypeScript/JavaScript, HTML/CSS
+                </div>
+                <div class="skill">
+                    <strong>Testing/DevEx</strong><br/>
+                    Cypress, GitHub Actions, Postman
+                </div>
+                <div class="skill">
+                    <strong>Backend/Platform</strong><br/>
+                    Node.js, Python (FastAPI/Pydantic), Keycloak
+                </div>
+                <div class="skill">
+                    <strong>Design</strong><br/>
+                    Figma, design systems, accessible UI
+                </div>
+                <div class="skill">
+                    <strong>Tools</strong><br/>
+                    WebStorm, PyCharm (JetBrains), Jira, Docker, Lens, GitHub, Android Studio
+                </div>
+            </div>
+        </section>
 
-                    <img src="img/portal.png" class="img-responsive" alt="Screenshot of the Portal App">
-
-                    <h2 class="text-center">Client Portal</h2>
-                    <p>A Web Portal for users to retrieve statements, to view royalties data and insights. This is a
-                        collaborative task where I have contributed on re-branding of the portal, support monthly
-                        maintenance and enhancement of new
-                        features.</p>
-                    <h4>Technology</h4>
-                    <p>Portal is build on AngularJS framework and uses Node.js as a middleware for handling API request.
-                        The login template is written in Thymeleaf while the graphical view uses D3.js and DataMaps.</p>
-
-                    <div class="row text-center">
-                        <div class="col-xs-12">
-                            <div class="tech">
-                                <div class="tech-icon">
-                                    <i class="devicon-angularjs-plain colored"></i>
-                                    <div class="tooltip">AngularJs</div>
-                                </div>
-                                <div class="tech-icon">
-                                    <i class="devicon-nodejs-plain colored"></i>
-                                    <div class="tooltip">Node.js</div>
-                                </div>
-                            </div>
+        <section class="container" id="projects">
+            <div class="section-title">Featured Projects</div>
+            <div class="grid">
+                <article class="card">
+                    <img src="img/dcwiz.png" alt="DCWiz app screenshot" />
+                    <div class="pad">
+                        <h3>DCWiz – Data-Driven Operations Optimisation</h3>
+                        <p class="muted">
+                            Refined Figma mockups into production UI, led Next.js + MUI refactor, integrated ApexCharts for interactive analytics, added Cypress E2E coverage, and aligned FastAPI router schemas with Pydantic for data validation.
+                        </p>
+                        <div class="tagrow">
+                            <span class="tag">Next.js</span>
+                            <span class="tag">MUI</span>
+                            <span class="tag">ApexCharts</span>
+                            <span class="tag">Cypress</span>
+                            <span class="tag">Keycloak</span>
+                            <span class="tag">Python/Pydantic</span>
                         </div>
+                        <ul class="impact">
+                            <li>Improved critical fetches ~4s → ~1s</li>
+                            <li>Standardised UI library</li>
+                            <li>Introduced E2E tests</li>
+                            <li>Implemented fully responsive layouts across modules</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="img/portal.png" alt="Client portal screenshot" />
+                    <div class="pad">
+                        <h3>Client Portal – Royalties Data & Insights</h3>
+                        <p class="muted">Rebranded the portal and supported enhancements for enterprise users.</p>
+                        <div class="tagrow">
+                            <span class="tag">AngularJS</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">D3.js</span>
+                        </div>
+                        <ul class="impact">
+                            <li>Maintained high-traffic analytics views</li>
+                            <li>Delivered monthly iterations in sprints</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="img/myanalytics.png" alt="Android analytics screenshot" />
+                    <div class="pad">
+                        <h3>Analytics – Android App</h3>
+                        <p class="muted">Completed unfinished features and maintained improvements for enterprise Android application.</p>
+                        <div class="tagrow">
+                            <span class="tag">Android</span>
+                            <span class="tag">Java</span>
+                            <span class="tag">Retrofit</span>
+                        </div>
+                        <ul class="impact">
+                            <li>Ownership from dev → release → support</li>
+                            <li>Improved stability & UX</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="img/demoanalytics.png" alt="Demo Android app screenshot" />
+                    <div class="pad">
+                        <h3>Demo App – OKTA Auth Layer</h3>
+                        <p class="muted">Cloned Analytics app for internal demo with extra authentication layer.</p>
+                        <div class="tagrow">
+                            <span class="tag">Android</span>
+                            <span class="tag">OKTA</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="img/myweb.png" alt="Landing pages collage" />
+                    <div class="pad">
+                        <h3>Landing & Static Pages</h3>
+                        <p class="muted">Responsive event and campaign sites across SEA.</p>
+                        <div class="tagrow">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">Bootstrap</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="img/freelance.png" alt="Freelance microsites collage" />
+                    <div class="pad">
+                        <h3>Freelance Microsites</h3>
+                        <p class="muted">Built microsites for gaming events and community projects.</p>
+                        <div class="tagrow">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="container" id="design">
+            <div class="section-title">UI Platform & Design Systems</div>
+            <div class="grid">
+                <div class="card card-full">
+                    <div class="pad">
+                        <h3>UI Platform & Collaboration</h3>
+                        <p class="muted">
+                            Translate product ideas into Figma prototypes, build reusable MUI components, integrate charts and data grids, and document UI patterns to support faster cross-team delivery.
+                        </p>
+                        <ul class="impact">
+                            <li>Shared component library across modules</li>
+                            <li>Standardised accessibility theming</li>
+                            <li>Partnered with PMs/Researchers for validation</li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="row work-item-row">
-                <div class="col-sm-8 col-sm-offset-2 project">
-
-                    <img src="img/myanalytics.png" class="img-responsive" alt="Screenshot of the Analytics App">
-
-                    <h2 class="text-center"><a
-                            href="https://play.google.com/store/apps/details?id=com.warnerchappell.clientmusicportal&hl=en_US&gl=US"
-                            target="blank">Analytics</a></h2>
-                    <p>An Android application based on Client Portal for users to access their royalties on the go. I
-                        have contributed on the development of an unfinished build, release and enhancement of new
-                        pipeline
-                        feature.</p>
-                    <h4>Technology</h4>
-                    <p>Analytics is build with Android Java and Retrofit HTTP Client.</p>
-                    <div class="row text-center">
-                        <div class="col-xs-12">
-                            <div class="tech">
-                                <i class="devicon-android-plain-wordmark colored"></i>
-                                <i class="devicon-java-plain-wordmark colored"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row text-center" style="margin:20px;">
-                        <a class="btn btn-launch"
-                           href="https://play.google.com/store/apps/details?id=com.warnerchappell.clientmusicportal&hl=en_US&gl=US"
-                           target="blank">Go to app</a>
-                    </div>
+        <section class="container" id="contact">
+            <div class="contact">
+                <div>
+                    <h3>Let's build something useful.</h3>
+                    <div>Open to software and product engineering opportunities in SG/MY/remote. Happy to collaborate on UX-driven and data-focused projects.</div>
+                </div>
+                <div class="actions">
+                    <a class="btn" href="mailto:jjowcl01@gmail.com">Email me</a>
+                    <a class="btn" href="https://www.linkedin.com/in/cheauling-wong/" target="_blank">LinkedIn</a>
+                    <a class="btn" href="Wong-Cheau-Ling-Resume.pdf" target="_blank">Résumé</a>
                 </div>
             </div>
+        </section>
+    </main>
 
-            <div class="row work-item-row">
-                <div class="col-sm-8 col-sm-offset-2 project">
-                    <img src="img/demoanalytics.png" class="img-responsive" alt="Screenshot of the Demo Analytics App">
-                    <h2 class="text-center">Demo App</h2>
-                    <p>A cloned Android application of Analytics for internal demo purposes with added extra Login
-                        layer.</p>
-                    <h4>Technology</h4>
-                    <p>Demo app is a cloned of Analytics with added OKTA authentication layer.</p>
-                    <div class="row text-center">
-                        <div class="col-xs-12">
-                            <div class="tech">
-                                <i class="devicon-android-plain-wordmark colored"></i>
-                                <i class="devicon-java-plain-wordmark colored"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <footer>© <span id="year"></span> Joey Wong</footer>
 
-            <div class="row work-item-row">
-                <div class="col-sm-8 col-sm-offset-2 project">
-                    <img src="img/myweb.png" class="img-responsive" alt="Screenshot of various landing pages">
-                    <h2 class="text-center">Landing/Static Pages</h2>
-                    <p>Landing pages and static website developed for various events.</p>
-                    <h4>Technology</h4>
-                    <p>This web pages were developed with basic stacks such as HTML, CSS, jQuery, Javascript and
-                        Bootstrap for responsiveness.</p>
-                    <div class="row text-center">
-                        <div class="col-xs-12">
-                            <div class="tech">
-                                <i class="devicon-html5-plain-wordmark colored"></i>
-                                <i class="devicon-css3-plain-wordmark colored"></i>
-                                <i class="devicon-javascript-plain"></i>
-                                <i class="devicon-bootstrap-plain-wordmark colored"></i>
-                                <i class="devicon-jquery-plain-wordmark colored"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row work-item-row">
-                <div class="col-sm-8 col-sm-offset-2 project">
-                    <img src="img/freelance.png" class="img-responsive"
-                         alt="Screenshot of the freelance projects microsites">
-                    <h2 class="text-center">Freelance projects</h2>
-                    <p>Microsites developed for a freelance project.</p>
-                    <h4>Technology</h4>
-                    <p>This web pages were developed with basic stacks such as HTML, CSS, jQuery, Javascript and
-                        Bootstrap for responsiveness.</p>
-                    <div class="row text-center">
-                        <div class="col-xs-12">
-                            <div class="tech">
-                                <i class="devicon-html5-plain-wordmark colored"></i>
-                                <i class="devicon-css3-plain-wordmark colored"></i>
-                                <i class="devicon-javascript-plain"></i>
-                                <i class="devicon-bootstrap-plain-wordmark colored"></i>
-                                <i class="devicon-jquery-plain-wordmark colored"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row row-tools row-grey">
-                <div class="col-sm-12 text-center">
-
-                    <h3>Tools</h3>
-                    <div class="tech">
-                        <div class="tech-icon">
-                            <i class="devicon-intellij-plain colored"></i>
-                            <div class="tooltip">IntelliJ</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-visualstudio-plain colored"></i>
-                            <div class="tooltip">Visual Studio</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-git-plain colored"></i>
-                            <div class="tooltip">Git</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-githubactions-plain colored"></i>
-                            <div class="tooltip">GitHub Actions</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-figma-plain colored"></i>
-                            <div class="tooltip">Figma</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-jira-plain colored"></i>
-                            <div class="tooltip">Jira</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-postman-plain colored"></i>
-                            <div class="tooltip">Postman</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-fastapi-plain colored"></i>
-                            <div class="tooltip">FastAPI</div>
-                        </div>
-                        <div class="tech-icon">
-                            <i class="devicon-androidstudio-plain colored"></i>
-                            <div class="tooltip">Android Studio</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row row-footer text-center">
-                <div class="col">
-                    <div style="margin:50px;">
-                        <p style="margin:50px 0 15px">© 2025 Joey Wong</p>
-                    </div>
-                </div>
-            </div>
-
-        </div> <!-- end main content -->
-
-    </div>
-
-</div>
-
-
-<!-- Including Bootstrap JS (with its jQuery dependency) so that dynamic components work -->
-<script src="js/jquery-3.1.0.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<!-- <script src="js/myScripts.js"></script> -->
-
-<script>
-    $(document).scroll(function () {
-        var y = $(this).scrollTop();
-        if (y > 500) {
-            $('.bottom-cta').slideDown();
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+        const toggleBtn = document.getElementById('theme-toggle');
+        const key = 'jw-theme';
+        const themeIcon = document.getElementById('theme-icon');
+        const apply = (mode) => {
+            if (mode === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.documentElement.style.colorScheme = 'light';
+                themeIcon.textContent = '☀️';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.documentElement.style.colorScheme = 'dark';
+                themeIcon.textContent = '🌙';
+            }
+            localStorage.setItem(key, mode);
+        };
+        const stored = localStorage.getItem(key);
+        if (stored) {
+            apply(stored);
         } else {
-            $('.bottom-cta').slideUp();
+            const prefersLight = matchMedia('(prefers-color-scheme: light)').matches;
+            apply(prefersLight ? 'light' : 'dark');
         }
-    });
-</script>
-
+        toggleBtn.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newMode = current === 'light' ? 'dark' : 'light';
+            apply(newMode);
+        });
+    </script>
 </body>
 </html>
