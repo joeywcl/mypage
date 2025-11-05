@@ -174,7 +174,7 @@ header {
     grid-template-columns: 1.1fr .9fr;
     gap: var(--space-xl);
     align-items: center;
-    padding: var(--space-2xl) var(--space-lg);
+    padding: var(--space-2xl) var(--space-lg) var(--space-xl) var(--space-lg);
 }
 
 .hero h2 {
@@ -202,6 +202,7 @@ header {
     border: 1px solid var(--stroke);
     font-size: var(--font-sm);
     color: var(--muted);
+    margin-bottom: var(--space-md);
 }
 
 .hero-card {
