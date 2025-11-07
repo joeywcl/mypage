@@ -2,8 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'export', // Static export for GitHub Pages
+  basePath: '/portfolio',
+  assetPrefix: '/portfolio/',
   images: {
-    unoptimized: true, // Required for static export
+    unoptimized: true,
   },
 }
 
