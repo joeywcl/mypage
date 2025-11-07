@@ -1,0 +1,26 @@
+/* Theme flash prevention - applied before React hydrates */
+/* Ensure body also gets the theme to prevent any flash */
+html[data-theme="light"],
+html[data-theme="light"] body {
+  background: linear-gradient(180deg, #f7f9ff 0%, #fff 40%, #f7f9ff 100%) !important;
+  color-scheme: light;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html:not([data-theme]),
+html:not([data-theme]) body {
+  background: linear-gradient(180deg, #0b1020 0%, #121936 40%, #0b1020 100%) !important;
+  color-scheme: dark;
+}
+
+/* Prevent any default MUI styles from flashing */
+html[data-theme="light"] * {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] *,
+html:not([data-theme]) * {
+  color-scheme: dark;
+}
+
