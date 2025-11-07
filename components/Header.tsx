@@ -4,6 +4,7 @@ import * as React from 'react'
 import { AppBar, Toolbar, Box, Button, IconButton, Avatar, useTheme } from '@mui/material'
 import { Brightness4, Brightness7 } from '@mui/icons-material'
 import { ThemeContext } from '@/app/ThemeRegistry'
+import { getAssetPath } from '@/lib/config'
 
 export default function Header() {
   const theme = useTheme()
@@ -32,7 +33,7 @@ export default function Header() {
       >
         <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <Avatar
-            src="/img/profile-photo.jpg"
+            src={getAssetPath('/img/profile-photo.jpg')}
             alt="Joey profile"
             sx={{
               width: 40,
@@ -58,7 +59,7 @@ export default function Header() {
         <Box sx={{ display: 'flex', gap: '18px', alignItems: 'center', flexWrap: 'wrap' }}>
           <Button
             variant="contained"
-            href="/Wong-Cheau-Ling-Resume.pdf"
+            href={getAssetPath('/Wong-Cheau-Ling-Resume.pdf')}
             target="_blank"
             rel="noopener"
             sx={{

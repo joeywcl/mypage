@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { Container, Box, Typography, Button, useTheme } from '@mui/material'
+import { getAssetPath } from '@/lib/config'
 
 export default function Contact() {
   const theme = useTheme()
@@ -93,7 +94,7 @@ export default function Contact() {
           </Button>
           <Button
             variant="outlined"
-            href="/Wong-Cheau-Ling-Resume.pdf"
+            href={getAssetPath('/Wong-Cheau-Ling-Resume.pdf')}
             target="_blank"
             sx={{
               borderRadius: '999px',

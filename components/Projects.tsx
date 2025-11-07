@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { Container, Typography, Box, Paper, Grid, Chip, List, ListItem, useTheme } from '@mui/material'
 import Image from 'next/image'
+import { getAssetPath } from '@/lib/config'
 
 interface Project {
   title: string
@@ -17,7 +18,7 @@ const projects: Project[] = [
   {
     title: 'DCWiz – Data-Driven Operations Optimisation',
     description: 'Translated product requirements and wireframes into Figma prototypes, led Next.js + MUI refactor, integrated ApexCharts for interactive analytics, added Cypress E2E coverage, and aligned FastAPI router schemas with Pydantic for data validation.',
-    image: '/img/dcwiz.png',
+    image: getAssetPath('/img/dcwiz.png'),
     imageAlt: 'DCWiz app screenshot',
     tags: ['Next.js', 'MUI', 'ApexCharts', 'Cypress', 'Keycloak', 'Python/Pydantic'],
     impact: [
@@ -30,7 +31,7 @@ const projects: Project[] = [
   {
     title: 'Client Portal – Royalties Data & Insights',
     description: 'Collaborated with enterprise clients to rebrand and enhance the royalties analytics portal.',
-    image: '/img/portal.png',
+    image: getAssetPath('/img/portal.png'),
     imageAlt: 'Client portal screenshot',
     tags: ['AngularJS', 'Node.js', 'D3.js'],
     impact: [
@@ -41,7 +42,7 @@ const projects: Project[] = [
   {
     title: 'Analytics – Android App',
     description: 'Completed pending features, improved UX, and maintained enterprise Android analytics app.',
-    image: '/img/myanalytics.png',
+    image: getAssetPath('/img/myanalytics.png'),
     imageAlt: 'Android analytics screenshot',
     tags: ['Android', 'Java', 'Retrofit'],
     impact: [
@@ -52,21 +53,21 @@ const projects: Project[] = [
   {
     title: 'Demo App – OKTA Auth Layer',
     description: 'Cloned Analytics app for internal demo with extra authentication layer.',
-    image: '/img/demoanalytics.png',
+    image: getAssetPath('/img/demoanalytics.png'),
     imageAlt: 'Demo Android app screenshot',
     tags: ['Android', 'OKTA'],
   },
   {
     title: 'Landing & Static Pages',
     description: 'Responsive event and campaign sites across SEA.',
-    image: '/img/myweb.png',
+    image: getAssetPath('/img/myweb.png'),
     imageAlt: 'Landing pages collage',
     tags: ['HTML', 'CSS', 'JavaScript', 'Bootstrap'],
   },
   {
     title: 'Freelance Microsites',
     description: 'Built microsites for gaming events and community projects.',
-    image: '/img/freelance.png',
+    image: getAssetPath('/img/freelance.png'),
     imageAlt: 'Freelance microsites collage',
     tags: ['HTML', 'CSS', 'JavaScript'],
   },

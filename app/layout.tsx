@@ -3,6 +3,7 @@ import React from 'react'
 import Script from 'next/script'
 import ThemeRegistry from './ThemeRegistry'
 import './theme-init.css'
+import { getAssetPath } from '@/lib/config'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io/portfolio'),
@@ -15,25 +16,25 @@ export const metadata: Metadata = {
     description: 'Next.js, React, Material UI, Cypress, Python/Pydantic. Building data-driven UIs for enterprise apps and creative products.',
     type: 'website',
     url: 'https://joeywcl.github.io/portfolio',
-    images: ['/img/dcwiz.png'],
+    images: [getAssetPath('/img/dcwiz.png')],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Wong Cheau Ling (Joey) – Frontend Developer',
     description: 'Next.js, React, Material UI, Cypress, Python/Pydantic. Building data-driven UIs for enterprise apps and creative products.',
-    images: ['/img/dcwiz.png'],
+    images: [getAssetPath('/img/dcwiz.png')],
   },
   icons: {
     icon: [
-      { url: '/img/favicon/favicon.ico', sizes: 'any' },
-      { url: '/img/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/img/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: getAssetPath('/img/favicon/favicon.ico'), sizes: 'any' },
+      { url: getAssetPath('/img/favicon/favicon-16x16.png'), sizes: '16x16', type: 'image/png' },
+      { url: getAssetPath('/img/favicon/favicon-32x32.png'), sizes: '32x32', type: 'image/png' },
     ],
     apple: [
-      { url: '/img/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: getAssetPath('/img/favicon/apple-touch-icon.png'), sizes: '180x180', type: 'image/png' },
     ],
   },
-  manifest: '/img/favicon/site.webmanifest',
+  manifest: getAssetPath('/img/favicon/site.webmanifest'),
 }
 
 export const viewport: Viewport = {
@@ -70,6 +71,22 @@ export default function RootLayout({
                   document.documentElement.style.colorScheme = 'dark';
                 }
               })();
+            `,
+          }}
+        />
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-9CYNBP2KC7"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-9CYNBP2KC7');
             `,
           }}
         />
