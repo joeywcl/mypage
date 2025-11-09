@@ -4,7 +4,7 @@ A modern, responsive portfolio website showcasing my work as a Frontend Develope
 
 ## 🚀 Live Site
 
-[View Portfolio](https://joeywcl.github.io/portfolio/)
+[View Portfolio](https://joeywcl.github.io/)
 
 ## ✨ Features
 
@@ -100,6 +100,9 @@ The site is configured for GitHub Pages deployment using GitHub Actions. The wor
 - Uses Next.js static export (`output: 'export'`) for GitHub Pages compatibility
 - Images are unoptimized for static hosting
 - All components are client-side rendered (`'use client'`) for theme toggle functionality
+- Redirects are set up for backward compatibility:
+  - `/portfolio` → redirects to root `/`
+  - `/mypage` → redirects to root `/`
 
 ## 🎨 Features Breakdown
 
