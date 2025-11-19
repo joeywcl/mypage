@@ -8,12 +8,12 @@ import { getAssetPath } from '@/lib/config'
 export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io/portfolio'),
   title: 'Wong Cheau Ling (Joey) – Frontend Developer',
-  description: 'Frontend Developer in Singapore. Next.js, React, Material UI, Cypress, Python/Pydantic. Building data-driven UIs for enterprise apps and creative products.',
+  description: 'Frontend Developer in Singapore. Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
   keywords: ['Frontend Developer', 'Next.js', 'React', 'Material UI', 'TypeScript', 'Web Development', 'Singapore', 'Portfolio'],
   authors: [{ name: 'Wong Cheau Ling (Joey)', url: 'https://github.com/joeywcl' }],
   openGraph: {
     title: 'Wong Cheau Ling (Joey) – Frontend Developer',
-    description: 'Next.js, React, Material UI, Cypress, Python/Pydantic. Building data-driven UIs for enterprise apps and creative products.',
+    description: 'Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
     type: 'website',
     url: 'https://joeywcl.github.io/portfolio',
     images: [getAssetPath('/img/dcwiz.png')],
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Wong Cheau Ling (Joey) – Frontend Developer',
-    description: 'Next.js, React, Material UI, Cypress, Python/Pydantic. Building data-driven UIs for enterprise apps and creative products.',
+    description: 'Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   icons: {

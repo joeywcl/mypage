@@ -59,8 +59,20 @@ export default function DesignSystems() {
                 marginBottom: 1.25,
               }}
             >
-              Translate product ideas into Figma prototypes, build reusable MUI components, integrate charts
-              and data grids, and document UI patterns to support faster cross-team delivery.
+              I translate product requirements and early wireframes into Figma prototypes,
+              build reusable MUI components, integrate charts and data grids, and document
+              UI patterns to support faster cross-team delivery.
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                marginBottom: 1.25,
+              }}
+            >
+              I also design and maintain frontend architecture for large-scale data flows,
+              including real-time streaming updates, multi-page datasets, and performance
+              optimisation using RTK Query.
             </Typography>
             <List
               sx={{

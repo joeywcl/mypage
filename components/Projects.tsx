@@ -17,10 +17,11 @@ interface Project {
 const projects: Project[] = [
   {
     title: 'DCWiz – Data-Driven Operations Optimisation',
-    description: 'Translated product requirements and wireframes into Figma prototypes, led Next.js + MUI refactor, integrated ApexCharts for interactive analytics, added Cypress E2E coverage, and aligned FastAPI router schemas with Pydantic for data validation.',
+    description:
+      'I translated product requirements and wireframes into Figma prototypes, led a Next.js + MUI refactor, integrated ApexCharts for interactive analytics, added Cypress E2E coverage, and aligned FastAPI router schemas with Pydantic for data validation.',
     image: getAssetPath('/img/dcwiz.png'),
     imageAlt: 'DCWiz app screenshot',
-    tags: ['Next.js', 'MUI', 'ApexCharts', 'Cypress', 'Keycloak', 'Python/Pydantic'],
+    tags: ['Next.js', 'MUI', 'ApexCharts', 'Cypress', 'Keycloak', 'Python (FastAPI/Pydantic)'],
     impact: [
       'Improved critical fetches ~4s → ~1s',
       'Standardised UI library',
@@ -30,7 +31,7 @@ const projects: Project[] = [
   },
   {
     title: 'Client Portal – Royalties Data & Insights',
-    description: 'Collaborated with enterprise clients to rebrand and enhance the royalties analytics portal.',
+    description: 'I collaborated with enterprise clients to rebrand and enhance the royalties analytics portal.',
     image: getAssetPath('/img/portal.png'),
     imageAlt: 'Client portal screenshot',
     tags: ['AngularJS', 'Node.js', 'D3.js'],
@@ -41,7 +42,7 @@ const projects: Project[] = [
   },
   {
     title: 'Analytics – Android App',
-    description: 'Completed pending features, improved UX, and maintained enterprise Android analytics app.',
+    description: 'I completed pending features, improved UX, and maintained an enterprise Android analytics app.',
     image: getAssetPath('/img/myanalytics.png'),
     imageAlt: 'Android analytics screenshot',
     tags: ['Android', 'Java', 'Retrofit'],
@@ -52,21 +53,21 @@ const projects: Project[] = [
   },
   {
     title: 'Demo App – OKTA Auth Layer',
-    description: 'Cloned Analytics app for internal demo with extra authentication layer.',
+    description: 'I cloned the Analytics app for an internal demo and added an extra authentication layer.',
     image: getAssetPath('/img/demoanalytics.png'),
     imageAlt: 'Demo Android app screenshot',
     tags: ['Android', 'OKTA'],
   },
   {
     title: 'Landing & Static Pages',
-    description: 'Responsive event and campaign sites across SEA.',
+    description: 'I designed and built responsive event and campaign sites across SEA.',
     image: getAssetPath('/img/myweb.png'),
     imageAlt: 'Landing pages collage',
     tags: ['HTML', 'CSS', 'JavaScript', 'Bootstrap'],
   },
   {
     title: 'Freelance Microsites',
-    description: 'Built microsites for gaming events and community projects.',
+    description: 'I built microsites for gaming events and community projects.',
     image: getAssetPath('/img/freelance.png'),
     imageAlt: 'Freelance microsites collage',
     tags: ['HTML', 'CSS', 'JavaScript'],

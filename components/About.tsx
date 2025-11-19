@@ -17,7 +17,7 @@ export default function About() {
     },
     {
       title: 'Backend/Platform',
-      content: 'Node.js, Python (FastAPI/Pydantic), Keycloak, Docker',
+      content: 'Node.js, Python (FastAPI/Pydantic), Postgres, InfluxDB, Keycloak, Docker, Ansible',
     },
     {
       title: 'Design & UX',
@@ -59,15 +59,17 @@ export default function About() {
         }}
       >
         I&apos;ve shipped production features across data-heavy enterprise apps, artist portals, and Android apps.
-        I collaborate closely with product and research teams, translate ideas into Figma prototypes and production
-        code, and keep quality high with Cypress and CI.
-        Experienced in state management and API integration using RTK Query, and in implementing secure
-        authentication flows with NextAuth and Keycloak.
-        Experienced in integrating REST and schema-validated APIs; familiar with federated data flows and GraphQL
-        concepts.
-        Familiar with backend databases and deployment tools including Postgres, InfluxDB, Docker, and Ansible.
-        Previously the sole frontend for Garena Malaysia; later full-stack at Warner Music; now Research Engineer at
-        NTU.
+        I work closely with product and research teams—turning ideas into Figma prototypes and then into production code,
+        keeping quality high with Cypress and CI.
+
+        Most of my time goes into building scalable frontend data layers with RTK Query—streaming APIs, SSE-driven
+        real-time updates, paginated fetching for large datasets, and granular cache management. I handle secure
+        authentication flows (NextAuth, Keycloak) and integrate REST and schema-validated APIs. I&apos;ve also worked
+        with Python (FastAPI/Pydantic) on the backend, and I&apos;m currently using Postgres, InfluxDB, Docker,
+        and Ansible in my projects.
+
+        I started as the sole frontend developer for Garena Malaysia, then went full-stack at Warner Music.
+        Now I&apos;m a Research Engineer at NTU.
       </Typography>
       <Grid container spacing={1.5}>
         {skills.map((skill) => (

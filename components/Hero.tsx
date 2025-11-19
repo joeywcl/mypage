@@ -38,7 +38,7 @@ export default function Hero() {
               marginBottom: 2,
             }}
           >
-            Singapore · Next.js · React · MUI · ApexCharts · Cypress · Python/Pydantic
+            Singapore · Next.js · React · MUI · ApexCharts · Cypress · Python (FastAPI/Pydantic)
           </Box>
           <Typography
             variant="h2"
@@ -60,6 +60,16 @@ export default function Hero() {
             I&apos;m a frontend engineer who started in gaming & music tech and now craft enterprise web apps for
             AI-powered data centre optimisation. I love clean interfaces, reliable testing, and UX that respects
             users.
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              marginBottom: 2.75,
+            }}
+          >
+            I work end-to-end from product wireframes to Figma prototypes to production-ready UIs, focusing on
+            data visualisation, streaming data flows, and responsive MUI design systems.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>
             <Button
@@ -137,7 +147,7 @@ export default function Hero() {
                 Also Hands-on With
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Python (Pydantic), Keycloak, GitHub Actions
+                Python (FastAPI/Pydantic), Keycloak, GitHub Actions
               </Typography>
             </Grid>
             <Grid item xs={6}>
