@@ -2,9 +2,6 @@
 
 import * as React from 'react'
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
 const getTheme = (mode: 'light' | 'dark') => {
   return createTheme({
@@ -27,7 +24,7 @@ const getTheme = (mode: 'light' | 'dark') => {
     },
     typography: {
       fontFamily: [
-        inter.style.fontFamily,
+        'Inter',
         'system-ui',
         '-apple-system',
         'Segoe UI',
