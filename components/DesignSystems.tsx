@@ -43,16 +43,6 @@ export default function DesignSystems() {
             }}
           >
             <Typography
-              variant="h3"
-              component="h3"
-              sx={{
-                marginBottom: 0.75,
-                fontSize: '20px',
-              }}
-            >
-              UI Platform & Collaboration
-            </Typography>
-            <Typography
               variant="body2"
               sx={{
                 color: 'text.secondary',

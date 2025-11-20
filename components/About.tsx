@@ -56,13 +56,14 @@ export default function About() {
         sx={{
           marginBottom: 3,
           color: 'text.primary',
+          whiteSpace: 'pre-line',
         }}
       >
         I&apos;ve shipped production features across data-heavy enterprise apps, artist portals, and Android apps.
-        I work closely with product and research teams—turning ideas into Figma prototypes and then into production code,
+        I work closely with product and research teams, turning ideas into Figma prototypes and then into production code,
         keeping quality high with Cypress and CI.
 
-        Most of my time goes into building scalable frontend data layers with RTK Query—streaming APIs, SSE-driven
+        Most of my time goes into building scalable frontend data layers with RTK Query and streaming APIs, SSE-driven
         real-time updates, paginated fetching for large datasets, and granular cache management. I handle secure
         authentication flows (NextAuth, Keycloak) and integrate REST and schema-validated APIs. I&apos;ve also worked
         with Python (FastAPI/Pydantic) on the backend, and I&apos;m currently using Postgres, InfluxDB, Docker,

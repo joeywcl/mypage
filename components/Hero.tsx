@@ -68,7 +68,7 @@ export default function Hero() {
               marginBottom: 2.75,
             }}
           >
-            I work end-to-end from product wireframes to Figma prototypes to production-ready UIs, focusing on
+            I work end-to-end from drawing up user interfaces in Figma to production-ready UIs, focusing on
             data visualisation, streaming data flows, and responsive MUI design systems.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>

@@ -3,5 +3,5 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://joeywcl.github.io/portfolio/sitemap.xml
+Sitemap: https://joeywcl.github.io/sitemap.xml
 

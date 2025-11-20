@@ -6,7 +6,7 @@ import './theme-init.css'
 import { getAssetPath } from '@/lib/config'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://joeywcl.github.io/portfolio'),
+  metadataBase: new URL('https://joeywcl.github.io'),
   title: 'Wong Cheau Ling (Joey) – Frontend Developer',
   description: 'Frontend Developer in Singapore. Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
   keywords: ['Frontend Developer', 'Next.js', 'React', 'Material UI', 'TypeScript', 'Web Development', 'Singapore', 'Portfolio'],
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: 'Wong Cheau Ling (Joey) – Frontend Developer',
     description: 'Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
     type: 'website',
-    url: 'https://joeywcl.github.io/portfolio',
+    url: 'https://joeywcl.github.io',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   twitter: {
