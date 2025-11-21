@@ -84,7 +84,7 @@ export const ThemeContext = React.createContext<{
 
 // Get theme from data-theme attribute (set by blocking script) or localStorage
 function getInitialMode(): 'light' | 'dark' {
-  if (typeof window === 'undefined') return 'dark'
+  if (typeof window === 'undefined') return 'light'
   
   const dataTheme = document.documentElement.getAttribute('data-theme')
   if (dataTheme === 'light' || dataTheme === 'dark') {
@@ -100,11 +100,11 @@ function getInitialMode(): 'light' | 'dark' {
     // localStorage not available
   }
   
-  return 'dark'
+  return 'light'
 }
 
 export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = React.useState<'light' | 'dark'>('dark')
+  const [mode, setMode] = React.useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
@@ -131,9 +131,9 @@ export default function ThemeRegistry({ children }: { children: React.ReactNode 
   // Prevent hydration mismatch by hiding content until client-side theme is determined
   if (!mounted) {
     return (
-      <ThemeProvider theme={getTheme('dark')}>
+      <ThemeProvider theme={getTheme('light')}>
         <CssBaseline />
-        <ThemeContext.Provider value={{ mode: 'dark', toggleTheme }}>
+        <ThemeContext.Provider value={{ mode: 'light', toggleTheme }}>
           <div style={{ visibility: 'hidden' }}>{children}</div>
         </ThemeContext.Provider>
       </ThemeProvider>

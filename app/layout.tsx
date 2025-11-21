@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0f172a',
+  themeColor: '#f7f9ff',
 }
 
 export default function RootLayout({
@@ -75,14 +75,12 @@ export default function RootLayout({
                     document.documentElement.setAttribute('data-theme', theme);
                     document.documentElement.style.colorScheme = theme;
                   } else {
-                    var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                    var initialTheme = prefersLight ? 'light' : 'dark';
-                    document.documentElement.setAttribute('data-theme', initialTheme);
-                    document.documentElement.style.colorScheme = initialTheme;
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    document.documentElement.style.colorScheme = 'light';
                   }
                 } catch (e) {
-                  document.documentElement.setAttribute('data-theme', 'dark');
-                  document.documentElement.style.colorScheme = 'dark';
+                  document.documentElement.setAttribute('data-theme', 'light');
+                  document.documentElement.style.colorScheme = 'light';
                 }
               })();
             `,
