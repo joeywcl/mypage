@@ -78,7 +78,7 @@ export const ThemeContext = React.createContext<{
   mode: 'light' | 'dark'
   toggleTheme: () => void
 }>({
-  mode: 'dark',
+  mode: 'light',
   toggleTheme: () => {},
 })
 

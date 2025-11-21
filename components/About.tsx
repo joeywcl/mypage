@@ -51,27 +51,44 @@ export default function About() {
       >
         About
       </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          marginBottom: 3,
-          color: 'text.primary',
-          whiteSpace: 'pre-line',
-        }}
-      >
-        I&apos;ve shipped production features across data-heavy enterprise apps, artist portals, and Android apps.
-        I work closely with product and research teams, turning ideas into Figma prototypes and then into production code,
-        keeping quality high with Cypress and CI.
-
-        Most of my time goes into building scalable frontend data layers with RTK Query and streaming APIs, SSE-driven
-        real-time updates, paginated fetching for large datasets, and granular cache management. I handle secure
-        authentication flows (NextAuth, Keycloak) and integrate REST and schema-validated APIs. I&apos;ve also worked
-        with Python (FastAPI/Pydantic) on the backend, and I&apos;m currently using Postgres, InfluxDB, Docker,
-        and Ansible in my projects.
-
-        I started as the sole frontend developer for Garena Malaysia, then went full-stack at Warner Music.
-        Now I&apos;m a Research Engineer at NTU.
-      </Typography>
+      <Box sx={{ marginBottom: 3 }}>
+        <Typography
+          variant="body1"
+          sx={{
+            marginBottom: 2,
+            color: 'text.primary',
+            lineHeight: 1.7,
+          }}
+        >
+          I&apos;ve shipped production features across data-heavy enterprise apps, artist portals, and Android apps.
+          I work closely with product and research teams, turning ideas into Figma prototypes and then into production code,
+          keeping quality high with Cypress and CI.
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            marginBottom: 2,
+            color: 'text.primary',
+            lineHeight: 1.7,
+          }}
+        >
+          Most of my time goes into building scalable frontend data layers with RTK Query and streaming APIs, SSE-driven
+          real-time updates, paginated fetching for large datasets, and granular cache management. I handle secure
+          authentication flows (NextAuth, Keycloak) and integrate REST and schema-validated APIs. I&apos;ve also worked
+          with Python (FastAPI/Pydantic) on the backend, and I&apos;m currently using Postgres, InfluxDB, Docker,
+          and Ansible in my projects.
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'text.primary',
+            lineHeight: 1.7,
+          }}
+        >
+          I started as the sole frontend developer for Garena Malaysia, then went full-stack at Warner Music.
+          Now I&apos;m a Research Engineer at NTU.
+        </Typography>
+      </Box>
       <Grid container spacing={1.5}>
         {skills.map((skill) => (
           <Grid item xs={12} sm={6} md={4} lg={2.4} key={skill.title}>
