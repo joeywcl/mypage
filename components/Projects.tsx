@@ -183,7 +183,7 @@ export default function Projects() {
                       marginTop: 1.25,
                       paddingLeft: 2.25,
                       '& .MuiListItem-root': {
-                        padding: '6px 0',
+                        padding: '2px 0',
                         fontSize: '14px',
                       },
                     }}

@@ -36,7 +36,7 @@ export default function DesignSystems() {
               backgroundColor: theme.palette.mode === 'dark' ? '#121936' : '#fff',
               border: `1px solid ${theme.palette.mode === 'dark' ? '#223057' : '#e6e9f5'}`,
               borderRadius: 2.25,
-              padding: 2.25,
+              padding: 3,
               boxShadow: theme.palette.mode === 'dark' 
                 ? '0 10px 25px rgba(0, 0, 0, 0.35)' 
                 : '0 10px 25px rgba(2, 6, 23, 0.08)',
@@ -66,10 +66,9 @@ export default function DesignSystems() {
             </Typography>
             <List
               sx={{
-                marginTop: 1.25,
                 paddingLeft: 2.25,
                 '& .MuiListItem-root': {
-                  padding: '6px 0',
+                  padding: '2px 0',
                   fontSize: '14px',
                 },
               }}

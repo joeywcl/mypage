@@ -86,7 +86,7 @@ export default function About() {
           }}
         >
           I started as the sole frontend developer for Garena Malaysia, then went full-stack at Warner Music.
-          Now I&apos;m a Research Engineer at NTU.
+          Now I&apos;m a Research Engineer at NTU, and I&apos;m currently picking up a self-taught learning path in generative AI engineering during my free time.
         </Typography>
       </Box>
       <Grid container spacing={1.5}>
