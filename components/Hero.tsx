@@ -38,7 +38,7 @@ export default function Hero() {
               marginBottom: 2,
             }}
           >
-            Singapore · Next.js · React · MUI · ApexCharts · Cypress · Python (FastAPI/Pydantic)
+            Singapore · Next.js · React · MUI · Cypress · FastAPI
           </Box>
           <Typography
             variant="h2"
@@ -57,19 +57,8 @@ export default function Hero() {
               marginBottom: 2.75,
             }}
           >
-            I&apos;m a frontend engineer who started in gaming & music tech and now craft enterprise web apps for
-            AI-powered data centre optimisation. I love clean interfaces, reliable testing, and UX that respects
-            users.
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'text.secondary',
-              marginBottom: 2.75,
-            }}
-          >
-            I work end-to-end from drawing up user interfaces in Figma to production-ready UIs, focusing on
-            data visualisation, streaming data flows, and responsive MUI design systems.
+            Frontend engineer building data-heavy enterprise web apps. I go end-to-end from Figma to production,
+            focusing on data visualisation, real-time UI, and reliable testing.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>
             <Button

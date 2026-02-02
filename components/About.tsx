@@ -9,7 +9,8 @@ export default function About() {
   const skills = [
     {
       title: 'Frontend',
-      content: 'Next.js, React, MUI (DataGrid), ApexCharts, AngularJS, RTK Query, NextAuth, TypeScript/JavaScript, HTML/CSS',
+      content:
+        'Next.js, React, MUI (DataGrid), Redux Toolkit, React Flow, ApexCharts, AngularJS, RTK Query, NextAuth, TypeScript/JavaScript, HTML/CSS, i18n',
     },
     {
       title: 'Testing/DevEx',
@@ -17,7 +18,7 @@ export default function About() {
     },
     {
       title: 'Backend/Platform',
-      content: 'Node.js, Python (FastAPI/Pydantic), Postgres, InfluxDB, Keycloak, Docker, Ansible',
+      content: 'Node.js, Python (FastAPI/Pydantic), WebSockets/SSE, Postgres, InfluxDB, Keycloak, Docker, Ansible',
     },
     {
       title: 'Design & UX',
@@ -25,7 +26,8 @@ export default function About() {
     },
     {
       title: 'Workflow & Tools',
-      content: 'WebStorm, PyCharm (JetBrains), Jira, Docker, Lens, GitHub, Android Studio · Agile/Scrum',
+      content:
+        'Cursor, OpenCode, WebStorm, PyCharm (JetBrains), Jira, Docker, Lens, GitHub, Android Studio · Agile/Scrum',
     },
   ]
 
@@ -60,23 +62,9 @@ export default function About() {
             lineHeight: 1.7,
           }}
         >
-          I&apos;ve shipped production features across data-heavy enterprise apps, artist portals, and Android apps.
-          I work closely with product and research teams, turning ideas into Figma prototypes and then into production code,
-          keeping quality high with Cypress and CI.
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            marginBottom: 2,
-            color: 'text.primary',
-            lineHeight: 1.7,
-          }}
-        >
-          Most of my time goes into building scalable frontend data layers with RTK Query and streaming APIs, SSE-driven
-          real-time updates, paginated fetching for large datasets, and granular cache management. I handle secure
-          authentication flows (NextAuth, Keycloak) and integrate REST and schema-validated APIs. I&apos;ve also worked
-          with Python (FastAPI/Pydantic) on the backend, and I&apos;m currently using Postgres, InfluxDB, Docker,
-          and Ansible in my projects.
+          I build data-heavy enterprise apps and work closely with product and research teams, turning ideas into Figma
+          prototypes and then into production code, backed by testing and CI. Previously: Garena (frontend) and Warner
+          Music (full-stack); now a Research Engineer at NTU.
         </Typography>
         <Typography
           variant="body1"
@@ -85,8 +73,9 @@ export default function About() {
             lineHeight: 1.7,
           }}
         >
-          I started as the sole frontend developer for Garena Malaysia, then went full-stack at Warner Music.
-          Now I&apos;m a Research Engineer at NTU, and I&apos;m currently picking up a self-taught learning path in generative AI engineering during my free time.
+          I specialise in scalable frontend data layers (RTK Query), real-time updates (SSE/WebSockets), and secure auth
+          (NextAuth/Keycloak). My team is actively adopting AI-assisted development (Cursor, OpenCode) with reviews and
+          tests as guardrails.
         </Typography>
       </Box>
       <Grid container spacing={1.5}>

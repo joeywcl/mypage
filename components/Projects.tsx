@@ -12,9 +12,26 @@ interface Project {
   imageAlt: string
   tags: string[]
   impact?: string[]
+  links?: Array<{ label: string; href: string }>
+  note?: string
 }
 
 const projects: Project[] = [
+  {
+    title: 'DCWiz Canvas – AI-Powered Workflow Builder',
+    description:
+      'I built an interactive canvas for visual data workflows: drag-and-drop nodes, connect live metrics and documents, and generate AI analysis with source traceability.',
+    image: getAssetPath('/img/dcwiz-canvas.png'),
+    imageAlt: 'DCWiz canvas workspace screenshot',
+    tags: ['Next.js', 'React Flow', 'MUI', 'Redux Toolkit', 'WebSockets', 'i18n'],
+    impact: [
+      'Implemented a node-based workflow UI with custom node types',
+      'Added AI answer node with sources + downloadable outputs',
+      'Built multi-language UI (EN / ZH-CN / MS)',
+      'Exported canvas to PNG/PDF for sharing',
+    ],
+    note: 'Company project (NDA). Details shared at a high level.',
+  },
   {
     title: 'DCWiz – Data-Driven Operations Optimisation',
     description:
@@ -28,6 +45,7 @@ const projects: Project[] = [
       'Introduced E2E tests',
       'Implemented fully responsive layouts across modules',
     ],
+    note: 'Company project (NDA). Details shared at a high level.',
   },
   {
     title: 'Client Portal – Royalties Data & Insights',
@@ -194,6 +212,40 @@ export default function Projects() {
                       </ListItem>
                     ))}
                   </List>
+                )}
+                {(project.links?.length || project.note) && (
+                  <Box sx={{ marginTop: 1.25, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                    {!!project.links?.length && (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        {project.links.map((link) => (
+                          <Chip
+                            key={`${project.title}-${link.label}`}
+                            component="a"
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener"
+                            clickable
+                            label={link.label}
+                            size="small"
+                            sx={{
+                              fontSize: '12px',
+                              height: 26,
+                              borderRadius: '999px',
+                              textDecoration: 'none',
+                              backgroundColor: theme.palette.mode === 'dark' ? '#101a3a' : '#fff',
+                              border: `1px solid ${theme.palette.mode === 'dark' ? '#2a3a67' : '#d8def2'}`,
+                              color: 'text.primary',
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    )}
+                    {project.note && (
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        {project.note}
+                      </Typography>
+                    )}
+                  </Box>
                 )}
               </Box>
             </Paper>
