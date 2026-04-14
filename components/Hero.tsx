@@ -38,7 +38,7 @@ export default function Hero() {
               marginBottom: 2,
             }}
           >
-            Singapore · Next.js · React · MUI · Cypress · FastAPI
+              Singapore · Next.js · React · Workflow UI · AI UX · FastAPI
           </Box>
           <Typography
             variant="h2"
@@ -48,7 +48,7 @@ export default function Hero() {
               fontSize: { xs: '32px', md: '44px' },
             }}
           >
-            Turning complex data into clear, usable experiences through thoughtful UI design.
+            Building AI-assisted workflow tools that make complex data easier to navigate, trust, and act on.
           </Typography>
           <Typography
             variant="body1"
@@ -57,8 +57,8 @@ export default function Hero() {
               marginBottom: 2.75,
             }}
           >
-            Frontend engineer building data-heavy enterprise web apps. I go end-to-end from Figma to production,
-            focusing on data visualisation, real-time UI, and reliable testing.
+            Frontend engineer building data-heavy enterprise products from Figma to production. I focus on workflow
+            UX, real-time interfaces, rich data preview experiences, and reliable delivery for complex internal tools.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>
             <Button
@@ -120,7 +120,7 @@ export default function Hero() {
                 Current Focus
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Next.js, MUI, Design Systems, E2E Testing
+                Workflow UIs, AI-assisted interfaces, data visualisation, design systems
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -136,7 +136,7 @@ export default function Hero() {
                 Also Hands-on With
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Python (FastAPI/Pydantic), Keycloak, GitHub Actions
+                Python (FastAPI/Pydantic), streaming UX, auth flows, GitHub Actions
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -177,4 +177,3 @@ export default function Hero() {
     </Container>
   )
 }
-

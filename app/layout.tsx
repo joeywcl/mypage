@@ -7,21 +7,21 @@ import { getAssetPath } from '@/lib/config'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io'),
-  title: 'Wong Cheau Ling (Joey) – Frontend Developer',
-  description: 'Frontend Developer in Singapore. Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
-  keywords: ['Frontend Developer', 'Next.js', 'React', 'Material UI', 'TypeScript', 'Web Development', 'Singapore', 'Portfolio'],
+  title: 'Wong Cheau Ling (Joey) – Frontend Engineer',
+  description: 'Frontend Engineer in Singapore building AI-assisted workflow tools, data-heavy interfaces, and scalable product UI with Next.js, React, MUI, and FastAPI.',
+  keywords: ['Frontend Engineer', 'Next.js', 'React', 'Material UI', 'TypeScript', 'Workflow UI', 'Singapore', 'Portfolio'],
   authors: [{ name: 'Wong Cheau Ling (Joey)', url: 'https://github.com/joeywcl' }],
   openGraph: {
-    title: 'Wong Cheau Ling (Joey) – Frontend Developer',
-    description: 'Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
+    title: 'Wong Cheau Ling (Joey) – Frontend Engineer',
+    description: 'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product UI with Next.js, React, MUI, and FastAPI.',
     type: 'website',
     url: 'https://joeywcl.github.io',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Wong Cheau Ling (Joey) – Frontend Developer',
-    description: 'Next.js, React, Material UI, Cypress, Python (FastAPI/Pydantic). Building data-driven UIs for enterprise apps and creative products.',
+    title: 'Wong Cheau Ling (Joey) – Frontend Engineer',
+    description: 'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product UI with Next.js, React, MUI, and FastAPI.',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   icons: {
@@ -111,4 +111,3 @@ export default function RootLayout({
     </html>
   )
 }
-

@@ -50,8 +50,8 @@ export default function DesignSystems() {
               }}
             >
               I translate product requirements and early wireframes into Figma prototypes,
-              build reusable MUI components, integrate charts and data grids, and document
-              UI patterns to support faster cross-team delivery.
+              then turn them into reusable MUI components, workflow patterns, and data-rich
+              UI building blocks that help teams ship faster with more consistency.
             </Typography>
             <Typography
               variant="body2"
@@ -60,9 +60,10 @@ export default function DesignSystems() {
                 marginBottom: 1.25,
               }}
             >
-              I also design and maintain frontend architecture for large-scale data flows,
-              including real-time streaming updates, multi-page datasets, and performance
-              optimisation using RTK Query.
+              I also design frontend architecture for large-scale workflow surfaces,
+              including streaming states, chart and file previews, multi-step interactions,
+              and performance-conscious data flows, while using AI-assisted workflows to
+              accelerate iteration without dropping engineering quality.
             </Typography>
             <List
               sx={{
@@ -74,13 +75,13 @@ export default function DesignSystems() {
               }}
             >
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc' }}>
-                Shared component library across modules
+                Shared component library across modules and workflows
               </ListItem>
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc' }}>
-                Standardised accessibility theming
+                Reusable patterns for canvas controls, preview states, and data-heavy UI
               </ListItem>
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc' }}>
-                Partnered with PMs/Researchers for validation
+                Partnered with PMs and researchers to validate UX before and after build
               </ListItem>
             </List>
           </Paper>
@@ -89,4 +90,3 @@ export default function DesignSystems() {
     </Container>
   )
 }
-

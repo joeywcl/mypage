@@ -53,7 +53,7 @@ export default function Header() {
               color: 'text.primary',
             }}
           >
-            Wong Cheau Ling (Joey) · Frontend Developer
+            Wong Cheau Ling (Joey) · Frontend Engineer
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: '18px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -131,4 +131,3 @@ export default function Header() {
     </AppBar>
   )
 }
-

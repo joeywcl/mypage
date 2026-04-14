@@ -20,15 +20,15 @@ const projects: Project[] = [
   {
     title: 'DCWiz Canvas – AI-Powered Workflow Builder',
     description:
-      'I built an interactive canvas for visual data workflows: drag-and-drop nodes, connect live metrics and documents, and generate AI analysis with source traceability.',
+      'I build an AI-assisted workflow canvas for complex data analysis, where users connect nodes, inspect live data, review generated outputs, and move through dense workflows with confidence.',
     image: getAssetPath('/img/dcwiz-canvas.png'),
     imageAlt: 'DCWiz canvas workspace screenshot',
     tags: ['Next.js', 'React Flow', 'MUI', 'Redux Toolkit', 'WebSockets', 'i18n'],
     impact: [
-      'Implemented a node-based workflow UI with custom node types',
-      'Added AI answer node with sources + downloadable outputs',
-      'Built multi-language UI (EN / ZH-CN / MS)',
-      'Exported canvas to PNG/PDF for sharing',
+      'Designed large-canvas usability features including keyboard shortcuts, focus modes, and edge visibility controls',
+      'Improved AI chat UX with structured agent-run progress, clearer intermediate states, and source-aware outputs',
+      'Added richer data presentation through template chart rendering and multi-sheet Excel preview support',
+      'Built multilingual workflow tooling with export flows and reusable UI patterns for complex node-based interactions',
     ],
     note: 'Company project (NDA). Details shared at a high level.',
   },
@@ -46,6 +46,21 @@ const projects: Project[] = [
       'Implemented fully responsive layouts across modules',
     ],
     note: 'Company project (NDA). Details shared at a high level.',
+  },
+  {
+    title: 'Figma Make Bot – AI-Assisted Design Automation',
+    description:
+      'I built an experimental tool that turns a topic, spec document, or reference URL into a Figma Make prompt, submits it automatically, and iterates on the result through screenshot-based review and targeted follow-up fixes.',
+    image: getAssetPath('/img/figma-make-bot.png'),
+    imageAlt: 'Figma Make Bot review and generation workflow screenshot',
+    tags: ['TypeScript', 'OpenAI', 'Playwright', 'Figma Make', 'Prompt Design'],
+    impact: [
+      'Converted raw ideas, context documents, and reference URLs into structured Figma Make prompts for faster design exploration',
+      'Automated submission and retry loops in Figma Make, including handling generation issues and follow-up fixes',
+      'Added screenshot-based AI review passes to evaluate fidelity, clarity, and demo credibility against the original brief',
+      'Logged prompts, review scorecards, and generated URLs to create a more repeatable design iteration workflow',
+    ],
+    note: 'Personal experiment focused on AI-assisted product and design workflows.',
   },
   {
     title: 'Client Portal – Royalties Data & Insights',
@@ -255,4 +270,3 @@ export default function Projects() {
     </Container>
   )
 }
-

@@ -14,7 +14,7 @@ export default function About() {
     },
     {
       title: 'Testing/DevEx',
-      content: 'Cypress, GitHub Actions, Postman',
+      content: 'Cypress, automated testing, GitHub Actions, Postman',
     },
     {
       title: 'Backend/Platform',
@@ -27,7 +27,7 @@ export default function About() {
     {
       title: 'Workflow & Tools',
       content:
-        'Cursor, OpenCode, WebStorm, PyCharm (JetBrains), Jira, Docker, Lens, GitHub, Android Studio · Agile/Scrum',
+        'Cursor, Claude, OpenAI, OpenCode, WebStorm, PyCharm (JetBrains), Jira, Docker, Lens, GitHub, Android Studio · Agile/Scrum',
     },
   ]
 
@@ -62,9 +62,9 @@ export default function About() {
             lineHeight: 1.7,
           }}
         >
-          I build data-heavy enterprise apps and work closely with product and research teams, turning ideas into Figma
-          prototypes and then into production code, backed by testing and CI. Previously: Garena (frontend) and Warner
-          Music (full-stack); now a Research Engineer at NTU.
+          I build data-heavy enterprise products and work closely with product and research teams, turning early ideas
+          into Figma prototypes and then into production-ready UI. My recent work centers on AI-assisted workflow
+          canvases, data-rich interfaces, and frontend systems that stay usable even as complexity grows.
         </Typography>
         <Typography
           variant="body1"
@@ -73,9 +73,11 @@ export default function About() {
             lineHeight: 1.7,
           }}
         >
-          I specialise in scalable frontend data layers (RTK Query), real-time updates (SSE/WebSockets), and secure auth
-          (NextAuth/Keycloak). My team is actively adopting AI-assisted development (Cursor, OpenCode) with reviews and
-          tests as guardrails.
+          I specialise in scalable frontend data layers, real-time updates, and interaction design for large workflow
+          surfaces, including canvas controls, structured AI progress states, and file preview experiences. I also use
+          AI-assisted development tools to speed up prototyping, debugging, and documentation, with review and
+          automated testing as guardrails. Previously: Garena (frontend) and Warner Music (full-stack); now a Research
+          Engineer at NTU.
         </Typography>
       </Box>
       <Grid container spacing={1.5}>
@@ -111,4 +113,3 @@ export default function About() {
     </Container>
   )
 }
-
