@@ -10,11 +10,11 @@ export default function About() {
     {
       title: 'Frontend',
       content:
-        'Next.js, React, MUI (DataGrid), Redux Toolkit, React Flow, ApexCharts, AngularJS, RTK Query, NextAuth, TypeScript/JavaScript, HTML/CSS, i18n',
+        'Next.js, React, MUI, Redux Toolkit, React Flow, ApexCharts, RTK Query, NextAuth, TypeScript, JavaScript, HTML/CSS, i18n',
     },
     {
-      title: 'Testing/DevEx',
-      content: 'Cypress, automated testing, GitHub Actions, Postman',
+      title: 'Testing / Delivery',
+      content: 'Playwright, Cypress, GitHub Actions, Postman',
     },
     {
       title: 'Backend/Platform',
@@ -22,12 +22,12 @@ export default function About() {
     },
     {
       title: 'Design & UX',
-      content: 'Figma, design systems, accessible UI',
+      content: 'Figma, design systems, accessibility-aware UI, data visualisation',
     },
     {
       title: 'Workflow & Tools',
       content:
-        'Cursor, Claude, OpenAI, OpenCode, WebStorm, PyCharm (JetBrains), Jira, Docker, Lens, GitHub, Android Studio · Agile/Scrum',
+        'Claude, Cursor, OpenAI, OpenCode, Jira, GitHub, Lens, JetBrains IDEs, Android Studio, Agile/Scrum',
     },
   ]
 
@@ -74,10 +74,10 @@ export default function About() {
           }}
         >
           I specialise in scalable frontend data layers, real-time updates, and interaction design for large workflow
-          surfaces, including canvas controls, structured AI progress states, and file preview experiences. I also use
-          AI-assisted development tools to speed up prototyping, debugging, and documentation, with review and
-          automated testing as guardrails. Previously: Garena (frontend) and Warner Music (full-stack); now a Research
-          Engineer at NTU.
+          surfaces, including canvas controls, structured AI progress states, and file and report preview experiences.
+          I also use AI-assisted development tools to speed up prototyping, debugging, and documentation, with review
+          and automated testing as guardrails. Previously: Garena (frontend) and Warner Music (full-stack); now a
+          Research Engineer at NTU.
         </Typography>
       </Box>
       <Grid container spacing={1.5}>

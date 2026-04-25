@@ -50,8 +50,8 @@ export default function Contact() {
               color: 'rgba(255, 255, 255, 0.9)',
             }}
           >
-            Open to software and product engineering opportunities in Singapore, Malaysia, or remote. Always
-            keen to collaborate on UX-driven, data-focused projects that make complex systems easier to use.
+            Open to frontend, product engineering, and UX-focused software opportunities in Singapore, Malaysia, or
+            remote. Keen to collaborate on data-focused products that make complex systems easier to use.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: { xs: 2, md: 0 } }}>
@@ -116,4 +116,3 @@ export default function Contact() {
     </Container>
   )
 }
-

@@ -38,7 +38,7 @@ export default function Hero() {
               marginBottom: 2,
             }}
           >
-              Singapore · Next.js · React · Workflow UI · AI UX · FastAPI
+              Singapore · Next.js · React · Workflow UI · AI Product UX · FastAPI
           </Box>
           <Typography
             variant="h2"
@@ -57,8 +57,9 @@ export default function Hero() {
               marginBottom: 2.75,
             }}
           >
-            Frontend engineer building data-heavy enterprise products from Figma to production. I focus on workflow
-            UX, real-time interfaces, rich data preview experiences, and reliable delivery for complex internal tools.
+            Frontend / product engineer building data-heavy enterprise products from Figma to production. I focus on
+            workflow UX, real-time interfaces, rich preview experiences, and reliable delivery for complex internal
+            tools.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>
             <Button
@@ -120,7 +121,7 @@ export default function Hero() {
                 Current Focus
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Workflow UIs, AI-assisted interfaces, data visualisation, design systems
+                Complex workflow UIs, AI-assisted product interfaces, data visualisation, scalable design systems
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -136,7 +137,7 @@ export default function Hero() {
                 Also Hands-on With
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Python (FastAPI/Pydantic), streaming UX, auth flows, GitHub Actions
+                Python/FastAPI integration, streaming UX, auth flows, automated testing, GitHub Actions, build/debug support
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -152,7 +153,7 @@ export default function Hero() {
                 What I Value
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Clarity, maintainability, and empathetic UX
+                Clarity, maintainability, and thoughtful UX
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -168,7 +169,7 @@ export default function Hero() {
                 Collaboration
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Cross-functional teamwork & design alignment
+                Cross-functional collaboration and design alignment
               </Typography>
             </Grid>
           </Grid>

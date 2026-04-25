@@ -7,21 +7,34 @@ import { getAssetPath } from '@/lib/config'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io'),
-  title: 'Wong Cheau Ling (Joey) – Frontend Engineer',
-  description: 'Frontend Engineer in Singapore building AI-assisted workflow tools, data-heavy interfaces, and scalable product UI with Next.js, React, MUI, and FastAPI.',
-  keywords: ['Frontend Engineer', 'Next.js', 'React', 'Material UI', 'TypeScript', 'Workflow UI', 'Singapore', 'Portfolio'],
+  title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
+  description:
+    'Frontend / Product Engineer in Singapore building AI-assisted workflow tools, data-heavy interfaces, and scalable product systems with Next.js, React, MUI, and FastAPI.',
+  keywords: [
+    'Frontend Engineer',
+    'Product Engineer',
+    'Next.js',
+    'React',
+    'Material UI',
+    'TypeScript',
+    'Workflow UI',
+    'Singapore',
+    'Portfolio'
+  ],
   authors: [{ name: 'Wong Cheau Ling (Joey)', url: 'https://github.com/joeywcl' }],
   openGraph: {
-    title: 'Wong Cheau Ling (Joey) – Frontend Engineer',
-    description: 'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product UI with Next.js, React, MUI, and FastAPI.',
+    title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
+    description:
+      'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product systems with Next.js, React, MUI, and FastAPI.',
     type: 'website',
     url: 'https://joeywcl.github.io',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Wong Cheau Ling (Joey) – Frontend Engineer',
-    description: 'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product UI with Next.js, React, MUI, and FastAPI.',
+    title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
+    description:
+      'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product systems with Next.js, React, MUI, and FastAPI.',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   icons: {

@@ -27,7 +27,7 @@ const projects: Project[] = [
     impact: [
       'Designed large-canvas usability features including keyboard shortcuts, focus modes, and edge visibility controls',
       'Improved AI chat UX with structured agent-run progress, clearer intermediate states, and source-aware outputs',
-      'Added richer data presentation through template chart rendering and multi-sheet Excel preview support',
+      'Added richer data presentation through template chart rendering, multi-sheet Excel preview support, and HTML report-node viewing',
       'Built multilingual workflow tooling with export flows and reusable UI patterns for complex node-based interactions',
     ],
     note: 'Company project (NDA). Details shared at a high level.',
