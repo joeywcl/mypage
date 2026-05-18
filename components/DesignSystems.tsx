@@ -50,7 +50,7 @@ export default function DesignSystems() {
               }}
             >
               I turn requirements and wireframes into Figma prototypes, then into reusable MUI components and
-              workflow patterns — especially for canvas controls, preview states, and data-heavy screens.
+              workflow patterns, especially for canvas controls, preview states, and data-heavy screens.
             </Typography>
             <List
               sx={{

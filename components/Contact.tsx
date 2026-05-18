@@ -51,7 +51,7 @@ export default function Contact() {
             }}
           >
             Singapore, Malaysia, or remote. Especially interested in data-heavy products and workflow tooling. Résumé
-            and links below — or email me directly.
+            and links below, or email me directly.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: { xs: 2, md: 0 } }}>

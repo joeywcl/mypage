@@ -56,7 +56,7 @@ export default function About() {
             lineHeight: 1.7,
           }}
         >
-          I build data-heavy enterprise UIs with product and research teams — prototypes in Figma, then production in
+          I build data-heavy enterprise UIs with product and research teams, from prototypes in Figma to production in
           React. Lately that has meant AI-assisted workflow canvases, real-time interfaces, and frontends that stay
           usable as features pile on. I use AI tools to move faster on prototyping and debugging, with review and
           automated tests as guardrails. I also turn recurring UI into shared MUI patterns so teams ship more

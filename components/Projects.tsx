@@ -18,7 +18,7 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: 'DCWiz Canvas – AI-Powered Workflow Builder',
+    title: 'DCWiz Canvas: AI-Powered Workflow Builder',
     description:
       'AI-assisted workflow canvas for complex data analysis: connect nodes, inspect live data, review outputs, and move through dense flows without losing context.',
     image: getAssetPath('/img/dcwiz-canvas.png'),
@@ -33,7 +33,7 @@ const projects: Project[] = [
     note: 'Company project (NDA). Details at a high level.',
   },
   {
-    title: 'DCWiz – Data-Driven Operations Optimisation',
+    title: 'DCWiz: Data-Driven Operations Optimisation',
     description:
       'Enterprise analytics product: Figma prototypes, Next.js + MUI refactor, ApexCharts, Cypress E2E, and FastAPI/Pydantic alignment with the frontend.',
     image: getAssetPath('/img/dcwiz.png'),
@@ -47,7 +47,7 @@ const projects: Project[] = [
     note: 'Company project (NDA). Details at a high level.',
   },
   {
-    title: 'Figma Make Bot – AI-Assisted Design Automation',
+    title: 'Figma Make Bot: AI-Assisted Design Automation',
     description:
       'Side project: turns a topic, spec, or URL into a Figma Make prompt, submits it, and iterates via screenshot-based review and targeted fixes.',
     image: getAssetPath('/img/figma-make-bot.png'),
@@ -58,10 +58,10 @@ const projects: Project[] = [
       'Automated submit/retry in Figma Make with follow-up fixes',
       'Screenshot review for fidelity and demo readiness; logged iterations',
     ],
-    note: 'Personal experiment — AI-assisted design workflow.',
+    note: 'Personal experiment in AI-assisted design workflow.',
   },
   {
-    title: 'Client Portal – Royalties Data & Insights',
+    title: 'Client Portal: Royalties Data & Insights',
     description:
       'Enterprise royalties portal: rebranding and analytics enhancements with client stakeholders.',
     image: getAssetPath('/img/portal.png'),
@@ -73,7 +73,7 @@ const projects: Project[] = [
     ],
   },
   {
-    title: 'Analytics – Android App',
+    title: 'Analytics: Android App',
     description:
       'Enterprise Android analytics app: shipped pending features, UX improvements, and ongoing maintenance.',
     image: getAssetPath('/img/myanalytics.png'),
@@ -85,7 +85,7 @@ const projects: Project[] = [
     ],
   },
   {
-    title: 'Earlier work – demos, campaigns & microsites',
+    title: 'Earlier work: demos, campaigns & microsites',
     description:
       'Internal OKTA demo clone of the analytics app; responsive event and campaign sites across SEA; gaming event and community microsites.',
     image: getAssetPath('/img/myweb.png'),

@@ -7,7 +7,7 @@ import { getAssetPath } from '@/lib/config'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io'),
-  title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
+  title: 'Wong Cheau Ling (Joey) | Frontend / Product Engineer',
   description:
     'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
   keywords: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Wong Cheau Ling (Joey)', url: 'https://github.com/joeywcl' }],
   openGraph: {
-    title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
+    title: 'Wong Cheau Ling (Joey) | Frontend / Product Engineer',
     description:
       'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
     type: 'website',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
+    title: 'Wong Cheau Ling (Joey) | Frontend / Product Engineer',
     description:
       'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
     images: [getAssetPath('/img/dcwiz.png')],
