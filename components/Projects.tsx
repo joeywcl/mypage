@@ -20,90 +20,77 @@ const projects: Project[] = [
   {
     title: 'DCWiz Canvas – AI-Powered Workflow Builder',
     description:
-      'I build an AI-assisted workflow canvas for complex data analysis, where users connect nodes, inspect live data, review generated outputs, and move through dense workflows with confidence.',
+      'AI-assisted workflow canvas for complex data analysis: connect nodes, inspect live data, review outputs, and move through dense flows without losing context.',
     image: getAssetPath('/img/dcwiz-canvas.png'),
     imageAlt: 'DCWiz canvas workspace screenshot',
     tags: ['Next.js', 'React Flow', 'MUI', 'Redux Toolkit', 'WebSockets', 'i18n'],
     impact: [
-      'Designed large-canvas usability features including keyboard shortcuts, focus modes, and edge visibility controls',
-      'Improved AI chat UX with structured agent-run progress, clearer intermediate states, and source-aware outputs',
-      'Added richer data presentation through template chart rendering, multi-sheet Excel preview support, and HTML report-node viewing',
-      'Built multilingual workflow tooling with export flows and reusable UI patterns for complex node-based interactions',
+      'Canvas UX: keyboard shortcuts, focus modes, edge visibility controls',
+      'AI chat: clearer agent-run progress and source-aware outputs',
+      'Rich previews: template charts, multi-sheet Excel, HTML report nodes',
+      'Multilingual tooling, export flows, reusable node UI patterns',
     ],
-    note: 'Company project (NDA). Details shared at a high level.',
+    note: 'Company project (NDA). Details at a high level.',
   },
   {
     title: 'DCWiz – Data-Driven Operations Optimisation',
     description:
-      'I translated product requirements and wireframes into Figma prototypes, led a Next.js + MUI refactor, integrated ApexCharts for interactive analytics, added Cypress E2E coverage, and aligned FastAPI router schemas with Pydantic for data validation.',
+      'Enterprise analytics product: Figma prototypes, Next.js + MUI refactor, ApexCharts, Cypress E2E, and FastAPI/Pydantic alignment with the frontend.',
     image: getAssetPath('/img/dcwiz.png'),
     imageAlt: 'DCWiz app screenshot',
     tags: ['Next.js', 'MUI', 'ApexCharts', 'Cypress', 'Keycloak', 'Python (FastAPI/Pydantic)'],
     impact: [
-      'Improved critical fetches ~4s → ~1s',
-      'Standardised UI library',
-      'Introduced E2E tests',
-      'Implemented fully responsive layouts across modules',
+      'Critical fetches ~4s → ~1s',
+      'Standardised on MUI across modules',
+      'Added Cypress E2E; responsive layouts module-wide',
     ],
-    note: 'Company project (NDA). Details shared at a high level.',
+    note: 'Company project (NDA). Details at a high level.',
   },
   {
     title: 'Figma Make Bot – AI-Assisted Design Automation',
     description:
-      'I built an experimental tool that turns a topic, spec document, or reference URL into a Figma Make prompt, submits it automatically, and iterates on the result through screenshot-based review and targeted follow-up fixes.',
+      'Side project: turns a topic, spec, or URL into a Figma Make prompt, submits it, and iterates via screenshot-based review and targeted fixes.',
     image: getAssetPath('/img/figma-make-bot.png'),
     imageAlt: 'Figma Make Bot review and generation workflow screenshot',
     tags: ['TypeScript', 'OpenAI', 'Playwright', 'Figma Make', 'Prompt Design'],
     impact: [
-      'Converted raw ideas, context documents, and reference URLs into structured Figma Make prompts for faster design exploration',
-      'Automated submission and retry loops in Figma Make, including handling generation issues and follow-up fixes',
-      'Added screenshot-based AI review passes to evaluate fidelity, clarity, and demo credibility against the original brief',
-      'Logged prompts, review scorecards, and generated URLs to create a more repeatable design iteration workflow',
+      'Structured prompts from ideas, docs, and reference URLs',
+      'Automated submit/retry in Figma Make with follow-up fixes',
+      'Screenshot review for fidelity and demo readiness; logged iterations',
     ],
-    note: 'Personal experiment focused on AI-assisted product and design workflows.',
+    note: 'Personal experiment — AI-assisted design workflow.',
   },
   {
     title: 'Client Portal – Royalties Data & Insights',
-    description: 'I collaborated with enterprise clients to rebrand and enhance the royalties analytics portal.',
+    description:
+      'Enterprise royalties portal: rebranding and analytics enhancements with client stakeholders.',
     image: getAssetPath('/img/portal.png'),
     imageAlt: 'Client portal screenshot',
     tags: ['AngularJS', 'Node.js', 'D3.js'],
     impact: [
-      'Maintained high-traffic analytics views',
-      'Delivered monthly iterations in sprints',
+      'High-traffic analytics views in production',
+      'Monthly sprint deliveries with enterprise clients',
     ],
   },
   {
     title: 'Analytics – Android App',
-    description: 'I completed pending features, improved UX, and maintained an enterprise Android analytics app.',
+    description:
+      'Enterprise Android analytics app: shipped pending features, UX improvements, and ongoing maintenance.',
     image: getAssetPath('/img/myanalytics.png'),
     imageAlt: 'Android analytics screenshot',
     tags: ['Android', 'Java', 'Retrofit'],
     impact: [
-      'Ownership from dev → release → support',
-      'Improved stability & UX',
+      'Owned features from development through release and support',
+      'Improved stability and in-app UX',
     ],
   },
   {
-    title: 'Demo App – OKTA Auth Layer',
-    description: 'I cloned the Analytics app for an internal demo and added an extra authentication layer.',
-    image: getAssetPath('/img/demoanalytics.png'),
-    imageAlt: 'Demo Android app screenshot',
-    tags: ['Android', 'OKTA'],
-  },
-  {
-    title: 'Landing & Static Pages',
-    description: 'I designed and built responsive event and campaign sites across SEA.',
+    title: 'Earlier work – demos, campaigns & microsites',
+    description:
+      'Internal OKTA demo clone of the analytics app; responsive event and campaign sites across SEA; gaming event and community microsites.',
     image: getAssetPath('/img/myweb.png'),
-    imageAlt: 'Landing pages collage',
-    tags: ['HTML', 'CSS', 'JavaScript', 'Bootstrap'],
-  },
-  {
-    title: 'Freelance Microsites',
-    description: 'I built microsites for gaming events and community projects.',
-    image: getAssetPath('/img/freelance.png'),
-    imageAlt: 'Freelance microsites collage',
-    tags: ['HTML', 'CSS', 'JavaScript'],
+    imageAlt: 'Collage of earlier web and mobile work',
+    tags: ['Android', 'OKTA', 'HTML', 'CSS', 'JavaScript', 'Bootstrap'],
   },
 ]
 
@@ -130,7 +117,7 @@ export default function Projects() {
           marginBottom: 1,
         }}
       >
-        Featured Projects
+        Selected work
       </Typography>
       <Grid container spacing={2}>
         {projects.map((project) => (

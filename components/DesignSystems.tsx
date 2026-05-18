@@ -26,7 +26,7 @@ export default function DesignSystems() {
           marginBottom: 1,
         }}
       >
-        UI Platform & Design Systems
+        How I work with design
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -49,21 +49,8 @@ export default function DesignSystems() {
                 marginBottom: 1.25,
               }}
             >
-              I translate product requirements and early wireframes into Figma prototypes,
-              then turn them into reusable MUI components, workflow patterns, and data-rich
-              UI building blocks that help teams ship faster with more consistency.
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'text.secondary',
-                marginBottom: 1.25,
-              }}
-            >
-              I also design frontend architecture for large-scale workflow surfaces,
-              including streaming states, chart and file previews, multi-step interactions,
-              and performance-conscious data flows, while using AI-assisted workflows to
-              accelerate iteration without dropping engineering quality.
+              I turn requirements and wireframes into Figma prototypes, then into reusable MUI components and
+              workflow patterns — especially for canvas controls, preview states, and data-heavy screens.
             </Typography>
             <List
               sx={{
@@ -78,10 +65,10 @@ export default function DesignSystems() {
                 Shared component library across modules and workflows
               </ListItem>
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc' }}>
-                Reusable patterns for canvas controls, preview states, and data-heavy UI
+                Reusable patterns for canvas controls, previews, and dense data UI
               </ListItem>
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc' }}>
-                Partnered with PMs and researchers to validate UX before and after build
+                Work with PMs and researchers to validate UX before and after build
               </ListItem>
             </List>
           </Paper>

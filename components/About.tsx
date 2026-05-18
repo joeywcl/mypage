@@ -10,24 +10,19 @@ export default function About() {
     {
       title: 'Frontend',
       content:
-        'Next.js, React, MUI, Redux Toolkit, React Flow, ApexCharts, RTK Query, NextAuth, TypeScript, JavaScript, HTML/CSS, i18n',
+        'Next.js, React, TypeScript, MUI, Redux Toolkit, React Flow, ApexCharts, RTK Query, NextAuth, i18n',
     },
     {
-      title: 'Testing / Delivery',
+      title: 'Testing & delivery',
       content: 'Playwright, Cypress, GitHub Actions, Postman',
     },
     {
-      title: 'Backend/Platform',
-      content: 'Node.js, Python (FastAPI/Pydantic), WebSockets/SSE, Postgres, InfluxDB, Keycloak, Docker, Ansible',
+      title: 'Backend & platform',
+      content: 'Node.js, Python (FastAPI), WebSockets/SSE, Postgres, Keycloak, Docker',
     },
     {
       title: 'Design & UX',
       content: 'Figma, design systems, accessibility-aware UI, data visualisation',
-    },
-    {
-      title: 'Workflow & Tools',
-      content:
-        'Claude, Cursor, OpenAI, OpenCode, Jira, GitHub, Lens, JetBrains IDEs, Android Studio, Agile/Scrum',
     },
   ]
 
@@ -57,32 +52,20 @@ export default function About() {
         <Typography
           variant="body1"
           sx={{
-            marginBottom: 2,
             color: 'text.primary',
             lineHeight: 1.7,
           }}
         >
-          I build data-heavy enterprise products and work closely with product and research teams, turning early ideas
-          into Figma prototypes and then into production-ready UI. My recent work centers on AI-assisted workflow
-          canvases, data-rich interfaces, and frontend systems that stay usable even as complexity grows.
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            color: 'text.primary',
-            lineHeight: 1.7,
-          }}
-        >
-          I specialise in scalable frontend data layers, real-time updates, and interaction design for large workflow
-          surfaces, including canvas controls, structured AI progress states, and file and report preview experiences.
-          I also use AI-assisted development tools to speed up prototyping, debugging, and documentation, with review
-          and automated testing as guardrails. Previously: Garena (frontend) and Warner Music (full-stack); now a
-          Research Engineer at NTU.
+          I build data-heavy enterprise UIs with product and research teams — prototypes in Figma, then production in
+          React. Lately that has meant AI-assisted workflow canvases, real-time interfaces, and frontends that stay
+          usable as features pile on. I use AI tools to move faster on prototyping and debugging, with review and
+          automated tests as guardrails. I also turn recurring UI into shared MUI patterns so teams ship more
+          consistently. Previously at Garena and Warner Music, now working as a Research Engineer at NTU.
         </Typography>
       </Box>
       <Grid container spacing={1.5}>
         {skills.map((skill) => (
-          <Grid item xs={12} sm={6} md={4} lg={2.4} key={skill.title}>
+          <Grid item xs={12} sm={6} md={3} key={skill.title}>
             <Paper
               elevation={0}
               sx={{

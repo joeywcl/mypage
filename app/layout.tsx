@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io'),
   title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
   description:
-    'Frontend / Product Engineer in Singapore building AI-assisted workflow tools, data-heavy interfaces, and scalable product systems with Next.js, React, MUI, and FastAPI.',
+    'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
   keywords: [
     'Frontend Engineer',
     'Product Engineer',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
     description:
-      'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product systems with Next.js, React, MUI, and FastAPI.',
+      'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
     type: 'website',
     url: 'https://joeywcl.github.io',
     images: [getAssetPath('/img/dcwiz.png')],
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Wong Cheau Ling (Joey) – Frontend / Product Engineer',
     description:
-      'Building AI-assisted workflow tools, data-heavy interfaces, and scalable product systems with Next.js, React, MUI, and FastAPI.',
+      'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   icons: {

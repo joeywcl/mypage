@@ -38,7 +38,7 @@ export default function Hero() {
               marginBottom: 2,
             }}
           >
-              Singapore · Next.js · React · Workflow UI · AI Product UX · FastAPI
+              Singapore · React · Next.js · TypeScript · workflow & data UI
           </Box>
           <Typography
             variant="h2"
@@ -48,7 +48,7 @@ export default function Hero() {
               fontSize: { xs: '32px', md: '44px' },
             }}
           >
-            Building AI-assisted workflow tools that make complex data easier to navigate, trust, and act on.
+            Frontend / product engineer for complex, data-heavy UIs.
           </Typography>
           <Typography
             variant="body1"
@@ -57,9 +57,8 @@ export default function Hero() {
               marginBottom: 2.75,
             }}
           >
-            Frontend / product engineer building data-heavy enterprise products from Figma to production. I focus on
-            workflow UX, real-time interfaces, rich preview experiences, and reliable delivery for complex internal
-            tools.
+            I build workflow surfaces, real-time UI, charts, and file previews in React and Next.js, and work across
+            APIs, auth, testing, and CI when needed.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>
             <Button
@@ -118,10 +117,10 @@ export default function Hero() {
                   marginBottom: 0.5,
                 }}
               >
-                Current Focus
+                Focus
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Complex workflow UIs, AI-assisted product interfaces, data visualisation, scalable design systems
+                Workflow UIs, React Flow canvases, charts & previews, MUI component patterns
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -134,13 +133,13 @@ export default function Hero() {
                   marginBottom: 0.5,
                 }}
               >
-                Also Hands-on With
+                Also hands-on
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Python/FastAPI integration, streaming UX, auth flows, automated testing, GitHub Actions, build/debug support
+                Python/FastAPI, WebSockets/SSE, Playwright/Cypress, GitHub Actions
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Typography
                 variant="caption"
                 sx={{
@@ -150,26 +149,10 @@ export default function Hero() {
                   marginBottom: 0.5,
                 }}
               >
-                What I Value
+                Background
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Clarity, maintainability, and thoughtful UX
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontSize: '12px',
-                  color: 'text.secondary',
-                  display: 'block',
-                  marginBottom: 0.5,
-                }}
-              >
-                Collaboration
-              </Typography>
-              <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Cross-functional collaboration and design alignment
+                Research Engineer at NTU · ex-Garena · ex-Warner Music
               </Typography>
             </Grid>
           </Grid>

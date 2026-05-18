@@ -42,7 +42,7 @@ export default function Contact() {
               color: '#fff',
             }}
           >
-            Let&apos;s build something useful.
+            Open to frontend and product engineering roles.
           </Typography>
           <Typography
             variant="body1"
@@ -50,8 +50,8 @@ export default function Contact() {
               color: 'rgba(255, 255, 255, 0.9)',
             }}
           >
-            Open to frontend, product engineering, and UX-focused software opportunities in Singapore, Malaysia, or
-            remote. Keen to collaborate on data-focused products that make complex systems easier to use.
+            Singapore, Malaysia, or remote. Especially interested in data-heavy products and workflow tooling. Résumé
+            and links below — or email me directly.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: { xs: 2, md: 0 } }}>
