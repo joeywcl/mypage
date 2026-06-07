@@ -48,19 +48,17 @@ export default function About() {
       >
         About
       </Typography>
-      <Box sx={{ marginBottom: 3 }}>
-        <Typography
-          variant="body1"
-          sx={{
-            color: 'text.primary',
-            lineHeight: 1.7,
-          }}
-        >
-          I build data-heavy enterprise UIs with product and research teams, from prototypes in Figma to production in
-          React. Lately that has meant AI-assisted workflow canvases, real-time interfaces, and frontends that stay
-          usable as features pile on. I use AI tools to move faster on prototyping and debugging, with review and
-          automated tests as guardrails. I also turn recurring UI into shared MUI patterns so teams ship more
-          consistently. Previously at Garena and Warner Music, now working as a Research Engineer at NTU.
+      <Box sx={{ marginBottom: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Typography variant="body1" sx={{ color: 'text.primary', lineHeight: 1.7 }}>
+          I build data-heavy enterprise UIs, from prototypes in Figma to production in React. Lately that has meant
+          AI-assisted workflow canvases, real-time interfaces, and frontends that stay usable as features pile on.
+        </Typography>
+        <Typography variant="body1" sx={{ color: 'text.primary', lineHeight: 1.7 }}>
+          I use AI tools to move faster on prototyping and debugging, with code review and automated tests as
+          guardrails. I also turn recurring UI into shared MUI patterns so teams ship more consistently.
+        </Typography>
+        <Typography variant="body1" sx={{ color: 'text.primary', lineHeight: 1.7 }}>
+          Previously at Garena and Warner Music, now a Frontend / Full Stack Engineer at NTU (Red Dot AI).
         </Typography>
       </Box>
       <Grid container spacing={1.5}>

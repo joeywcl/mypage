@@ -42,7 +42,7 @@ export default function Contact() {
               color: '#fff',
             }}
           >
-            Open to frontend and product engineering roles.
+            Open to frontend, software, and full-stack roles.
           </Typography>
           <Typography
             variant="body1"
@@ -77,6 +77,7 @@ export default function Contact() {
             variant="outlined"
             href="https://www.linkedin.com/in/cheauling-wong/"
             target="_blank"
+            rel="noopener noreferrer"
             sx={{
               borderRadius: '999px',
               textTransform: 'none',
@@ -94,8 +95,9 @@ export default function Contact() {
           </Button>
           <Button
             variant="outlined"
-            href={getAssetPath('/Wong-Cheau-Ling-Resume.pdf')}
+            href={getAssetPath('/CheauLing_Wong_resume.pdf')}
             target="_blank"
+            rel="noopener noreferrer"
             sx={{
               borderRadius: '999px',
               textTransform: 'none',

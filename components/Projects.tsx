@@ -18,33 +18,54 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: 'DCWiz Canvas: AI-Powered Workflow Builder',
+    title: 'Red Dot AI Rebrand: Wix → Webflow, Solo',
     description:
-      'AI-assisted workflow canvas for complex data analysis: connect nodes, inspect live data, review outputs, and move through dense flows without losing context.',
-    image: getAssetPath('/img/dcwiz-canvas.png'),
-    imageAlt: 'DCWiz canvas workspace screenshot',
-    tags: ['Next.js', 'React Flow', 'MUI', 'Redux Toolkit', 'WebSockets', 'i18n'],
+      'Took the company rebrand end to end. Migrated the corporate site from Wix to Webflow and built a second site, Red Dot Space, from scratch. Both shipped to production within a month.',
+    image: getAssetPath('/img/rebrand.jpg'),
+    imageAlt: 'Red Dot AI Webflow rebrand screenshot',
+    tags: ['Webflow', 'CMS', 'SEO', 'GA4', 'Claude MCP', 'HTML/CSS'],
     impact: [
-      'Canvas UX: keyboard shortcuts, focus modes, edge visibility controls',
-      'AI chat: clearer agent-run progress and source-aware outputs',
-      'Rich previews: template charts, multi-sheet Excel, HTML report nodes',
-      'Multilingual tooling, export flows, reusable node UI patterns',
+      'Migrated rda.ai from Wix to Webflow, and built reddot.space from scratch',
+      'Leaned on Claude and Claude MCP for refactoring and CMS iteration, saving roughly 8 days',
+      'Set up SEO, GA4, and Google Search Console on both sites',
+      'Built an internal branding system: a shared brand design system, plus self-serve name card and email signature generators',
     ],
-    note: 'Company project (NDA). Details at a high level.',
+    links: [
+      { label: 'rda.ai', href: 'https://rda.ai' },
+      { label: 'reddot.space', href: 'https://reddot.space' },
+    ],
   },
   {
-    title: 'DCWiz: Data-Driven Operations Optimisation',
+    title: 'DCWiz AI Canvas: real-time workflow builder',
     description:
-      'Enterprise analytics product: Figma prototypes, Next.js + MUI refactor, ApexCharts, Cypress E2E, and FastAPI/Pydantic alignment with the frontend.',
+      'Built from scratch in Next.js and React Flow, and grown into a production tool used in enterprise demos. Connect nodes, inspect live data, review outputs, and move through dense flows without losing context.',
+    // TODO: replace with a lighter, more zoomed-in canvas shot (current image reads dark/hard to scan).
+    // Capture from the running app — workflow mid-run with a chart/preview visible. Do not fake one.
+    image: getAssetPath('/img/dcwiz-canvas.png'),
+    imageAlt: 'DCWiz canvas workspace screenshot',
+    tags: ['Next.js', 'React Flow', 'MUI', 'Redux Toolkit', 'SSE', 'i18n'],
+    impact: [
+      'Built real-time multi-user sessions with SSE streaming for live agent runs',
+      'Shipped rich previews: image upload (MinIO), multi-sheet XLSX, HTML report nodes, chart templates',
+      'Refined the canvas UX with keyboard shortcuts, focus modes, and edge visibility controls',
+      'Turned recurring UI into reusable node patterns, export flows, and multilingual tooling',
+    ],
+    note: 'Built at NTU · Red Dot AI. Shown at a high level.',
+  },
+  {
+    title: 'DCWiz platform: simulation, monitoring & AI recommendations',
+    description:
+      'The broader enterprise analytics product: Figma prototypes through a Next.js + MUI architecture refactor, with FastAPI/Pydantic aligned to the frontend.',
     image: getAssetPath('/img/dcwiz.png'),
     imageAlt: 'DCWiz app screenshot',
     tags: ['Next.js', 'MUI', 'ApexCharts', 'Cypress', 'Keycloak', 'Python (FastAPI/Pydantic)'],
     impact: [
-      'Critical fetches ~4s → ~1s',
-      'Standardised on MUI across modules',
-      'Added Cypress E2E; responsive layouts module-wide',
+      'Cut critical fetches from ~4s to ~1s with request parallelisation and caching',
+      'Led the frontend Keycloak/NextAuth integration through two major upgrades (v6→v9, v22→v25)',
+      'Delivered simulation, monitoring, and AI-recommendation modules: version history, model comparison, view-only access, XLSX export',
+      'Standardised on MUI across modules and added Cypress E2E with responsive layouts',
     ],
-    note: 'Company project (NDA). Details at a high level.',
+    note: 'Built at NTU · Red Dot AI. Shown at a high level.',
   },
   {
     title: 'Figma Make Bot: AI-Assisted Design Automation',
@@ -80,7 +101,7 @@ const projects: Project[] = [
     imageAlt: 'Android analytics screenshot',
     tags: ['Android', 'Java', 'Retrofit'],
     impact: [
-      'Owned features from development through release and support',
+      'Delivered features from development through release and support',
       'Improved stability and in-app UX',
     ],
   },
@@ -88,8 +109,8 @@ const projects: Project[] = [
     title: 'Earlier work: demos, campaigns & microsites',
     description:
       'Internal OKTA demo clone of the analytics app; responsive event and campaign sites across SEA; gaming event and community microsites.',
-    image: getAssetPath('/img/myweb.png'),
-    imageAlt: 'Collage of earlier web and mobile work',
+    image: getAssetPath('/img/myweb.jpg'),
+    imageAlt: 'Collage of earlier demos, OKTA app, campaign sites, and gaming microsites',
     tags: ['Android', 'OKTA', 'HTML', 'CSS', 'JavaScript', 'Bootstrap'],
   },
 ]
@@ -225,7 +246,7 @@ export default function Projects() {
                             component="a"
                             href={link.href}
                             target="_blank"
-                            rel="noopener"
+                            rel="noopener noreferrer"
                             clickable
                             label={link.label}
                             size="small"

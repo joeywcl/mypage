@@ -26,14 +26,15 @@ export default function Hero() {
           <Box
             component="span"
             sx={{
-              display: 'inline-flex',
-              gap: 1,
-              alignItems: 'center',
-              padding: '8px 12px',
-              borderRadius: '999px',
+              display: 'inline-block',
+              maxWidth: '100%',
+              whiteSpace: 'normal',
+              padding: '8px 14px',
+              borderRadius: '16px',
               backgroundColor: theme.palette.mode === 'dark' ? '#1a244a' : '#edf2ff',
               border: `1px solid ${theme.palette.mode === 'dark' ? '#223057' : '#e6e9f5'}`,
-              fontSize: '14px',
+              fontSize: { xs: '13px', sm: '14px' },
+              lineHeight: 1.6,
               color: 'text.secondary',
               marginBottom: 2,
             }}
@@ -48,7 +49,7 @@ export default function Hero() {
               fontSize: { xs: '32px', md: '44px' },
             }}
           >
-            Frontend / product engineer for complex, data-heavy UIs.
+            Frontend engineer, 10+ years building complex, data-heavy UIs.
           </Typography>
           <Typography
             variant="body1"
@@ -57,8 +58,9 @@ export default function Hero() {
               marginBottom: 2.75,
             }}
           >
-            I build workflow surfaces, real-time UI, charts, and file previews in React and Next.js, and work across
-            APIs, auth, testing, and CI when needed.
+            For the past three years I&apos;ve taken the DCWiz AI canvas from an empty repo to a product used in
+            enterprise demos: real-time sessions, workflow tooling, charts, and file previews in React and Next.js.
+            When it helps, I go deeper into APIs, auth, testing, and CI.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>
             <Button
@@ -152,7 +154,7 @@ export default function Hero() {
                 Background
               </Typography>
               <Typography component="strong" sx={{ fontWeight: 600, display: 'block' }}>
-                Research Engineer at NTU · ex-Garena · ex-Warner Music
+                Frontend / Full Stack Engineer at NTU (Red Dot AI) · ex-Garena · ex-Warner Music
               </Typography>
             </Grid>
           </Grid>

@@ -27,17 +27,19 @@ export default function Header() {
           maxWidth: '1100px',
           width: '100%',
           margin: '0 auto',
-          padding: '14px 24px !important',
+          padding: { xs: '12px 16px !important', md: '14px 24px !important' },
           justifyContent: 'space-between',
+          gap: 1,
         }}
       >
-        <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center', minWidth: 0, flexShrink: 1 }}>
           <Avatar
             src={getAssetPath('/img/profile-photo.jpg')}
             alt="Joey profile"
             sx={{
-              width: 40,
-              height: 40,
+              width: { xs: 34, sm: 40 },
+              height: { xs: 34, sm: 40 },
+              flexShrink: 0,
               border: `1px solid ${theme.palette.mode === 'dark' ? '#223057' : '#e6e9f5'}`,
             }}
             imgProps={{
@@ -47,37 +49,47 @@ export default function Header() {
           <Box
             component="h1"
             sx={{
-              fontSize: '18px',
+              fontSize: { xs: '14px', sm: '18px' },
               fontWeight: 600,
               margin: 0,
               color: 'text.primary',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              minWidth: 0,
             }}
           >
-            Wong Cheau Ling (Joey) · Frontend / Product Engineer
+            Wong Cheau Ling (Joey)
+            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+              {' · Frontend Engineer · Full Stack'}
+            </Box>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: '18px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', gap: { xs: '8px', md: '18px' }, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0 }}>
           <Button
             variant="contained"
-            href={getAssetPath('/Wong-Cheau-Ling-Resume.pdf')}
+            href={getAssetPath('/CheauLing_Wong_resume.pdf')}
             target="_blank"
             rel="noopener"
             sx={{
               borderRadius: '999px',
               textTransform: 'none',
+              minWidth: 'auto',
+              px: { xs: 1.5, sm: 2 },
               background: 'linear-gradient(135deg, #6ea8ff, #a78bfa)',
               '&:hover': {
                 background: 'linear-gradient(135deg, #5a97ff, #9668f9)',
               },
             }}
           >
-            View Résumé
+            Résumé
           </Button>
           <Button
             variant="outlined"
             href="mailto:jjowcl01@gmail.com"
             aria-label="Email Joey"
             sx={{
+              display: { xs: 'none', sm: 'inline-flex' },
               borderRadius: '999px',
               textTransform: 'none',
               borderColor: theme.palette.mode === 'dark' ? '#223057' : '#e6e9f5',
@@ -98,6 +110,7 @@ export default function Header() {
             rel="me noopener"
             aria-label="GitHub"
             sx={{
+              display: { xs: 'none', sm: 'inline-flex' },
               borderRadius: '999px',
               textTransform: 'none',
               borderColor: theme.palette.mode === 'dark' ? '#223057' : '#e6e9f5',

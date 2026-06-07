@@ -7,12 +7,13 @@ import { getAssetPath } from '@/lib/config'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io'),
-  title: 'Wong Cheau Ling (Joey) | Frontend / Product Engineer',
+  title: 'Wong Cheau Ling (Joey) | Frontend Engineer · Full Stack',
   description:
-    'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
+    'Frontend / full stack engineer in Singapore, 10+ years across AI, media, and gaming. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
   keywords: [
     'Frontend Engineer',
-    'Product Engineer',
+    'Software Engineer',
+    'Full Stack Engineer',
     'Next.js',
     'React',
     'Material UI',
@@ -23,18 +24,18 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Wong Cheau Ling (Joey)', url: 'https://github.com/joeywcl' }],
   openGraph: {
-    title: 'Wong Cheau Ling (Joey) | Frontend / Product Engineer',
+    title: 'Wong Cheau Ling (Joey) | Frontend Engineer · Full Stack',
     description:
-      'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
+      'Frontend / full stack engineer in Singapore, 10+ years across AI, media, and gaming. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
     type: 'website',
     url: 'https://joeywcl.github.io',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Wong Cheau Ling (Joey) | Frontend / Product Engineer',
+    title: 'Wong Cheau Ling (Joey) | Frontend Engineer · Full Stack',
     description:
-      'Frontend / product engineer in Singapore. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
+      'Frontend / full stack engineer in Singapore, 10+ years across AI, media, and gaming. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   icons: {
