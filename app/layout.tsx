@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://joeywcl.github.io'),
   title: 'Wong Cheau Ling (Joey) | Frontend Engineer · Full Stack',
   description:
-    'Frontend / full stack engineer in Singapore, 10+ years across AI, media, and gaming. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
+    'Frontend Engineer · Full Stack, based in Singapore. 10+ years across AI, media, and gaming, building workflow UIs, real-time interfaces, and data-heavy enterprise products in React, Next.js, and TypeScript.',
   keywords: [
     'Frontend Engineer',
     'Software Engineer',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Wong Cheau Ling (Joey) | Frontend Engineer · Full Stack',
     description:
-      'Frontend / full stack engineer in Singapore, 10+ years across AI, media, and gaming. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
+      'Frontend Engineer · Full Stack, based in Singapore. 10+ years across AI, media, and gaming, building workflow UIs, real-time interfaces, and data-heavy enterprise products in React, Next.js, and TypeScript.',
     type: 'website',
     url: 'https://joeywcl.github.io',
     images: [getAssetPath('/img/dcwiz.png')],
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Wong Cheau Ling (Joey) | Frontend Engineer · Full Stack',
     description:
-      'Frontend / full stack engineer in Singapore, 10+ years across AI, media, and gaming. React, Next.js, and TypeScript for workflow UIs, real-time interfaces, and data-heavy enterprise products.',
+      'Frontend Engineer · Full Stack, based in Singapore. 10+ years across AI, media, and gaming, building workflow UIs, real-time interfaces, and data-heavy enterprise products in React, Next.js, and TypeScript.',
     images: [getAssetPath('/img/dcwiz.png')],
   },
   icons: {
