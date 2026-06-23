@@ -58,9 +58,9 @@ export default function Hero() {
               marginBottom: 2.75,
             }}
           >
-            For the past three years I&apos;ve taken the DCWiz AI canvas from an empty repo to a product used in
-            enterprise demos: real-time sessions, workflow tooling, charts, and file previews in React and Next.js.
-            When it helps, I go deeper into APIs, auth, testing, and CI.
+            For the past three years I&apos;ve taken the DCWiz AI canvas from an empty repo to the product the team
+            now demos to enterprise clients: real-time sessions, workflow tooling, charts, and file previews in React
+            and Next.js. When it helps, I go deeper into APIs, auth, testing, and CI.
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.25, flexWrap: 'wrap', marginTop: 1.5 }}>
             <Button

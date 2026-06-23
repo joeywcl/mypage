@@ -18,14 +18,14 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: 'Red Dot AI Rebrand: Wix → Webflow, Solo',
+    title: 'Red Dot AI rebrand, Wix to Webflow',
     description:
       'Took the company rebrand end to end. Migrated the corporate site from Wix to Webflow and built a second site, Red Dot Space, from scratch. Both shipped to production within a month.',
     image: getAssetPath('/img/rebrand.jpg'),
     imageAlt: 'Red Dot AI Webflow rebrand screenshot',
     tags: ['Webflow', 'CMS', 'SEO', 'GA4', 'Claude MCP', 'HTML/CSS'],
     impact: [
-      'Migrated rda.ai from Wix to Webflow, and built reddot.space from scratch',
+      'Sole engineer on the rebrand: migrated rda.ai from Wix to Webflow and built reddot.space from scratch',
       'Leaned on Claude and Claude MCP for refactoring and CMS iteration, saving roughly 8 days',
       'Set up SEO, GA4, and Google Search Console on both sites',
       'Built an internal branding system: a shared brand design system, plus self-serve name card and email signature generators',
@@ -38,7 +38,7 @@ const projects: Project[] = [
   {
     title: 'DCWiz AI Canvas: real-time workflow builder',
     description:
-      'Built from scratch in Next.js and React Flow, and grown into a production tool used in enterprise demos. Connect nodes, inspect live data, review outputs, and move through dense flows without losing context.',
+      'Built from scratch in Next.js and React Flow, now the production tool the team runs for live AI analysis sessions. Connect nodes, inspect live data, review outputs, and move through dense flows without losing context.',
     // TODO: replace with a lighter, more zoomed-in canvas shot (current image reads dark/hard to scan).
     // Capture from the running app — workflow mid-run with a chart/preview visible. Do not fake one.
     image: getAssetPath('/img/dcwiz-canvas.png'),
@@ -46,7 +46,7 @@ const projects: Project[] = [
     tags: ['Next.js', 'React Flow', 'MUI', 'Redux Toolkit', 'SSE', 'i18n'],
     impact: [
       'Built real-time multi-user sessions with SSE streaming for live agent runs',
-      'Shipped rich previews: image upload (MinIO), multi-sheet XLSX, HTML report nodes, chart templates',
+      'Shipped rich previews: image upload (MinIO), multi-sheet XLSX, HTML report nodes, and 19 chart templates',
       'Refined the canvas UX with keyboard shortcuts, focus modes, and edge visibility controls',
       'Turned recurring UI into reusable node patterns, export flows, and multilingual tooling',
     ],
@@ -60,15 +60,15 @@ const projects: Project[] = [
     imageAlt: 'DCWiz app screenshot',
     tags: ['Next.js', 'MUI', 'ApexCharts', 'Cypress', 'Keycloak', 'Python (FastAPI/Pydantic)'],
     impact: [
-      'Cut critical fetches from ~4s to ~1s with request parallelisation and caching',
+      'Cut critical API fetches from ~4s to ~1s with parallelisation and caching, and improved Core Web Vitals: LCP 2.01s to 0.16s (−92%), INP down 68%',
       'Led the frontend Keycloak/NextAuth integration through two major upgrades (v6→v9, v22→v25)',
       'Delivered simulation, monitoring, and AI-recommendation modules: version history, model comparison, view-only access, XLSX export',
-      'Standardised on MUI across modules and added Cypress E2E with responsive layouts',
+      'Standardised on MUI, migrated E2E from Cypress to Playwright, and built ~240 unit + E2E tests on GitHub Actions CI',
     ],
     note: 'Built at NTU · Red Dot AI. Shown at a high level.',
   },
   {
-    title: 'Figma Make Bot: AI-Assisted Design Automation',
+    title: 'Figma Make Bot, an AI design automation experiment',
     description:
       'Side project: turns a topic, spec, or URL into a Figma Make prompt, submits it, and iterates via screenshot-based review and targeted fixes.',
     image: getAssetPath('/img/figma-make-bot.png'),
@@ -94,7 +94,7 @@ const projects: Project[] = [
     ],
   },
   {
-    title: 'Analytics: Android App',
+    title: 'Android analytics app',
     description:
       'Enterprise Android analytics app: shipped pending features, UX improvements, and ongoing maintenance.',
     image: getAssetPath('/img/myanalytics.png'),

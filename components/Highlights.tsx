@@ -5,9 +5,9 @@ import { Container, Typography, Box, Paper, Grid, useTheme } from '@mui/material
 
 const highlights = [
   { stat: '10+ yrs', label: 'shipping production products across AI, media & gaming' },
-  { stat: '~4s → ~1s', label: 'cut critical fetch times with parallelisation & caching' },
+  { stat: '−92%', label: 'faster page load, LCP 2.0s to 0.16s, with INP down 68%' },
   { stat: '0 → 1', label: 'built the DCWiz AI canvas from scratch, now used in enterprise demos' },
-  { stat: '2 upgrades', label: 'led frontend Keycloak / NextAuth through two major upgrades' },
+  { stat: '1 month', label: 'sole engineer on the company rebrand, Wix to Webflow plus a second site from scratch' },
 ]
 
 export default function Highlights() {
