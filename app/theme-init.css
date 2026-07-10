@@ -14,6 +14,20 @@ html:not([data-theme]) body {
   color-scheme: dark;
 }
 
+/* Smooth in-page navigation, offset so anchors clear the sticky header */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+#about,
+#projects,
+#beyond,
+#contact {
+  scroll-margin-top: 84px;
+}
+
 /* Prevent any default MUI styles from flashing */
 html[data-theme="light"] * {
   color-scheme: light;

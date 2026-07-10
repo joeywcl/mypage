@@ -24,7 +24,7 @@ export default function Header() {
     >
       <Toolbar
         sx={{
-          maxWidth: '1100px',
+          maxWidth: '1200px',
           width: '100%',
           margin: '0 auto',
           padding: { xs: '12px 16px !important', md: '14px 24px !important' },
@@ -64,6 +64,41 @@ export default function Header() {
               {' · Frontend Engineer · Full Stack'}
             </Box>
           </Box>
+        </Box>
+        <Box
+          component="nav"
+          aria-label="Sections"
+          sx={{ display: { xs: 'none', lg: 'flex' }, gap: '4px', alignItems: 'center', flexShrink: 0 }}
+        >
+          {[
+            { label: 'Work', href: '#projects' },
+            { label: 'About', href: '#about' },
+            { label: 'Contact', href: '#contact' },
+          ].map((link) => (
+            <Button
+              key={link.href}
+              href={link.href}
+              disableRipple
+              sx={{
+                textTransform: 'none',
+                fontWeight: 500,
+                fontSize: '15px',
+                color: 'text.secondary',
+                px: 1.25,
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                  color: 'text.primary',
+                },
+                '&.Mui-focusVisible': {
+                  color: 'text.primary',
+                  outline: '2px solid #6ea8ff',
+                  outlineOffset: '2px',
+                },
+              }}
+            >
+              {link.label}
+            </Button>
+          ))}
         </Box>
         <Box sx={{ display: 'flex', gap: { xs: '8px', md: '18px' }, alignItems: 'center', flexWrap: 'nowrap', flexShrink: 0 }}>
           <Button

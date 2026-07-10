@@ -15,8 +15,8 @@ export default function Page() {
       <main>
         <Hero />
         <Highlights />
-        <About />
         <Projects />
+        <About />
         <DesignSystems />
         <BeyondWork />
         <Contact />

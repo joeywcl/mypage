@@ -39,8 +39,6 @@ const projects: Project[] = [
     title: 'DCWiz AI Canvas: real-time workflow builder',
     description:
       'Built from scratch in Next.js and React Flow, now the production tool the team runs for live AI analysis sessions. Connect nodes, inspect live data, review outputs, and move through dense flows without losing context.',
-    // TODO: replace with a lighter, more zoomed-in canvas shot (current image reads dark/hard to scan).
-    // Capture from the running app — workflow mid-run with a chart/preview visible. Do not fake one.
     image: getAssetPath('/img/dcwiz-canvas.png'),
     imageAlt: 'DCWiz canvas workspace screenshot',
     tags: ['Next.js', 'React Flow', 'MUI', 'Redux Toolkit', 'SSE', 'i18n'],
