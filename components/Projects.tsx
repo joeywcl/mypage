@@ -18,6 +18,22 @@ interface Project {
 
 const projects: Project[] = [
   {
+    title: 'NIGHT SHIFT, a data center operator sim',
+    description:
+      'A playable night shift in a Tier III data center: triage alarms, verify contractors at the gate, isolate lying sensors, and keep a hybrid air/liquid-cooled facility alive until 06:00 — then get graded like a real post-mortem.',
+    image: getAssetPath('/img/night-shift.png'),
+    imageAlt: 'NIGHT SHIFT operator console with a live critical alarm',
+    tags: ['TypeScript', 'React', 'Canvas', 'Simulation', 'Game Design'],
+    impact: [
+      'Pure-TypeScript deterministic simulation engine: one reducer, no game framework — 70 scenario assertions drive entire shifts through it in CI',
+      'Two-tempo design: a minutes-scale air-cooled hall vs a seconds-scale liquid-cooled GPU loop, making the case for predictive early warning playable',
+      'Sensor-trust mechanics: alarms follow readings, physics follows truth — drifting and stuck sensors turn every alert into a judgment call',
+      'In-fiction EOP procedures with live step check-off double as the tutorial, so non-domain players can finish a shift',
+    ],
+    links: [{ label: 'Play NIGHT SHIFT', href: '/night-shift' }],
+    note: 'Personal project, clean-room: domain-inspired, no employer code or designs.',
+  },
+  {
     title: 'Red Dot AI rebrand, Wix to Webflow',
     description:
       'Took the company rebrand end to end. Migrated the corporate site from Wix to Webflow and built a second site, Red Dot Space, from scratch. Both shipped to production within a month.',
