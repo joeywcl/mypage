@@ -368,7 +368,7 @@ function SmokePanel({
 
 function DoorPanel({ s, d, onDecide }: { s: GameState; d: DoorRequest | null; onDecide: (x: 'admit' | 'deny') => void }) {
   return (
-    <div className="ns-panel">
+    <div className="ns-panel" id="ns-gate">
       <div className="ns-panel-title">GATE · CAM-01 + INTERCOM</div>
       <div className="ns-panel-body">
         {!d ? (
@@ -498,7 +498,7 @@ export default function NightShift() {
   const [hints, setHints] = useState(true)
   const [eopView, setEopView] = useState<{ eopId: string; alarmId: number } | null>(null)
   const { beep, ensure } = useBeeper(muted)
-  const prev = useRef({ critCount: 0, doorId: 0 })
+  const prev = useRef({ critCount: 0, doorId: 0, doorBuzzT: 0 })
 
   useEffect(() => {
     if (s.phase !== 'playing') return
@@ -546,7 +546,15 @@ export default function NightShift() {
     }
     prev.current.critCount = crit
     const doorId = s.door?.id ?? 0
-    if (doorId && doorId !== prev.current.doorId) beep(220, 350, 0.05)
+    if (doorId && doorId !== prev.current.doorId) {
+      beep(220, 350, 0.05)
+      prev.current.doorBuzzT = s.t
+    }
+    // an unanswered intercom re-buzzes — real ones are just as impatient
+    if (s.door && s.t - prev.current.doorBuzzT >= 8) {
+      beep(220, 350, 0.05)
+      prev.current.doorBuzzT = s.t
+    }
     prev.current.doorId = doorId
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.alarms, s.door])
@@ -586,6 +594,15 @@ export default function NightShift() {
         <span className="ns-title">NIGHT SHIFT</span>
         <span className="ns-clock">{clockLabel(s.t)}</span>
         <div className="ns-progress"><div style={{ width: `${(s.t / SHIFT_END) * 100}%` }} /></div>
+        {s.door && (
+          <button
+            className="ns-btn amber ns-door-flag"
+            title="Someone is waiting at the gate — click to jump to the intercom"
+            onClick={() => document.getElementById('ns-gate')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+          >
+            ■ VISITOR AT GATE · {Math.floor(s.t - s.door.arrivedAt)}m
+          </button>
+        )}
         <span className="ns-spacer" />
         <span>{s.ups.onBattery ? <span className="ns-neg">UPS: ON BATTERY</span> : 'UPS: MAINS'}</span>
         <span>OPERATOR: {s.operator.kind === 'console' ? 'AT CONSOLE' : 'ON FLOOR'}</span>
