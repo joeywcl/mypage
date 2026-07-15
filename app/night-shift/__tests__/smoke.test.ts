@@ -10,7 +10,7 @@ import { act, assert, initialState, runTo } from './harness'
   s = act(s, { type: 'DOOR', decision: 'admit' })
   s = runTo(s, 431)
   assert(!!s.smoke && s.smoke.realFire, 's1: smoke is REAL after admitting saboteur')
-  s = runTo(s, 448)
+  s = runTo(s, 465) // fire lands at 430 + 30 fuse
   assert(s.zones[0].fire, 's1: hall A on fire after ignoring real smoke')
   assert(s.score.some((x) => x.pts === -40), 's1: -40 fire penalty applied')
   s = runTo(s, 480)

@@ -24,9 +24,9 @@ const TEMP_WARN = 33
 const TEMP_CRIT = 38
 const TEMP_SHUTDOWN = 42
 const TEMP_RECOVER = 34
-const DOOR_TIMEOUT = 15
-const ACK_GRACE = 6
-const SMOKE_FUSE = 15 // game minutes from pre-alarm to fire (if real)
+const DOOR_TIMEOUT = 24 // ~12 real seconds to read a work order properly
+const ACK_GRACE = 10
+const SMOKE_FUSE = 30 // game minutes from pre-alarm to fire (if real) — long enough to verify on foot
 const HISTORY_STEP = 2 // sample sensor-max every N game minutes
 const HISTORY_MAX = 40
 
@@ -35,7 +35,7 @@ const TJ_WARN = 88
 const TJ_THROTTLE = 95
 const TJ_TRIP = 105
 const TJ_START_OK = 90
-const LEAK_FUSE = 12 // game minutes from leak alert to busbar contact (if real)
+const LEAK_FUSE = 24 // game minutes from leak alert to busbar contact (if real) — verifiable on foot
 const PUMP_SPINUP = 3 // game minutes for a starting pump to reach full flow
 
 export function clockLabel(t: number): string {

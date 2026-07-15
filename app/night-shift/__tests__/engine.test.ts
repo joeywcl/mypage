@@ -27,7 +27,7 @@ import { act, assert, initialState, runTo } from './harness'
   let s = act(initialState(), { type: 'START' })
   s = runTo(s, 371)
   assert(!!s.liquid.leak && s.liquid.leak.real, 'L2: leak is REAL when P1 left failed')
-  s = runTo(s, 383)
+  s = runTo(s, 398) // busbar lands at 370 + 24 fuse
   assert(s.score.some((x) => x.pts === -35), 'L2: busbar catastrophe for ignoring real leak')
   assert(s.liquid.loopLocked && s.liquid.damaged && !s.liquid.gpuRunning, 'L2: loop dead, damage, fleet dark')
   s = act(s, { type: 'WALK' })
@@ -85,7 +85,7 @@ import { act, assert, initialState, runTo } from './harness'
   let s = act(initialState(), { type: 'START' })
   s = runTo(s, 371)
   s = act(s, { type: 'DISMISS_LEAK' })
-  s = runTo(s, 385)
+  s = runTo(s, 398)
   assert(s.score.some((x) => x.pts === -35), 'L5: -35 coolant-on-busbar penalty')
   assert(s.liquid.loopLocked, 'L5: loop contaminated')
 }
