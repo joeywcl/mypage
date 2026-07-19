@@ -20,15 +20,15 @@ const projects: Project[] = [
   {
     title: 'NIGHT SHIFT, a data center operator sim',
     description:
-      'A playable night shift in a Tier III data center: triage alarms, verify contractors at the gate, isolate lying sensors, and keep a hybrid air/liquid-cooled facility alive until 06:00 — then get graded like a real post-mortem.',
+      'A playable night shift in a Tier III data center: triage alarms, verify contractors, isolate lying sensors, and keep a hybrid air/liquid-cooled facility alive until 06:00, then get graded like a real post-mortem. 32 shareable nights, plus a Quiet Night mode where nothing happens, and that is the job.',
     image: getAssetPath('/img/night-shift.png'),
     imageAlt: 'NIGHT SHIFT operator console with a live critical alarm',
     tags: ['TypeScript', 'React', 'Canvas', 'Simulation', 'Game Design'],
     impact: [
-      'Pure-TypeScript deterministic simulation engine: one reducer, no game framework — 70 scenario assertions drive entire shifts through it in CI',
-      'Two-tempo design: a minutes-scale air-cooled hall vs a seconds-scale liquid-cooled GPU loop, making the case for predictive early warning playable',
-      'Sensor-trust mechanics: alarms follow readings, physics follows truth — drifting and stuck sensors turn every alert into a judgment call',
-      'In-fiction EOP procedures with live step check-off double as the tutorial, so non-domain players can finish a shift',
+      'Deterministic pure-TypeScript engine, no game framework: 128 scenario assertions run entire shifts in CI, gating every one of the 32 authored nights',
+      'Two-tempo hybrid cooling: slow air-side failures against a fast liquid GPU loop, making the case for predictive early warning playable',
+      'ASSIST, a scripted AI copilot that reads the same lying sensors you do and is confidently wrong on cue; the debrief grades your trust in it',
+      'Procedures are free, judgment is yours: live EOP check-off as the tutorial, and a 06:00 handover you can only fill with what you actually observed',
     ],
     links: [{ label: 'Play NIGHT SHIFT', href: '/night-shift' }],
     note: 'Personal project, clean-room: domain-inspired, no employer code or designs.',
