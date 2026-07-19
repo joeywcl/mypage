@@ -67,12 +67,13 @@ export const EOPS: Record<string, Eop> = {
   'EOP-05': {
     id: 'EOP-05',
     title: 'LOSS OF COOLANT FLOW / CDU PUMP FAULT',
-    why: 'Hall B’s GPUs are cooled by liquid, not air. No flow means chip temperature (Tj) races in MINUTES, not tens of minutes: throttle at 95°C, trip at 105°C with possible silicon damage. This is the fast tempo — the TREND line is your clock.',
+    why: 'Hall B’s racks are HYBRID. The GPU die is liquid-cooled: no flow and chip temperature (Tj) races in MINUTES — throttle at 95°C, trip at 105°C with possible silicon damage. But MEMORY still rides hall air: lose Hall B’s CRACs and MEM creeps toward throttle at 88°C on a slower clock. Two paths bind the same rack; read which one is moving. The TREND line is your clock — its TTB (time-to-breach) figure is the console’s estimate of minutes left before a threshold, and it is only as honest as the sensor feeding it.',
     steps: [
       { text: 'Acknowledge the alarm.', done: (s, a) => a.acked },
+      { text: 'Read WHICH temperature is moving. Tj racing = LIQUID path (flow/pumps). MEM creeping while Tj is fine = AIR path — the fix is Hall B’s CRACs (EOP-03), not the CDU.', done: (s) => s.liquid.memT < 80 },
       { text: 'Check FLOW and the pumps. One pump alone carries the loop fine — but with no standby left, you are one fault from a crisis.' },
       { text: 'TRIPPED pump → RMT RESET. FAILED pump → on-site service at the CDU (bottom aisle, Hall B).', done: (s) => s.liquid.flow === 100 },
-      { text: 'If flow is collapsing and Tj is racing: SHED LOAD immediately (less compute = less heat = more time).' },
+      { text: 'If either temperature is racing: SHED LOAD immediately (less compute = less heat on BOTH paths = more time).' },
       { text: 'If the TREND says TRIP arrives before your fix can: E-STOP the fleet YOURSELF. A controlled stop costs downtime; an uncontrolled trip costs downtime AND hardware.' },
       { text: 'Flow restored and Tj below 90 → START FLEET.', done: (s) => s.liquid.gpuRunning && s.liquid.tj < 95 },
     ],

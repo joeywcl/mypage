@@ -8,9 +8,12 @@
 import type {
   Action,
   Alarm,
+  AssistRec,
   CracUnit,
   GameState,
+  HandoverCandidate,
   LiquidLoop,
+  NightPlan,
   Sensor,
   Severity,
   Zone,
@@ -35,8 +38,37 @@ const TJ_WARN = 88
 const TJ_THROTTLE = 95
 const TJ_TRIP = 105
 const TJ_START_OK = 90
+// memory/VRMs are the AIR-cooled half of a hybrid rack: they ride hall B's
+// CRACs, not the liquid loop, and move on a slower clock than the die
+const MEM_WARN = 80
+const MEM_THROTTLE = 88
 const LEAK_FUSE = 24 // game minutes from leak alert to busbar contact (if real) — verifiable on foot
 const PUMP_SPINUP = 3 // game minutes for a starting pump to reach full flow
+
+// ---------------------------------------------------------------- night plan
+// Seed → authored permutation of tonight. Seed 1 (bits all zero) is the
+// canonical night the tests were written against. 32 distinct nights; every
+// one is deterministic, so a seed fully identifies a shareable shift.
+export const NIGHT_SEEDS = 32
+export function buildNightPlan(seed: number, quiet = false): NightPlan {
+  const n = Math.min(NIGHT_SEEDS, Math.max(1, Math.floor(seed) || 1))
+  const bits = n - 1
+  return {
+    seed: n,
+    quiet,
+    driftIdxA: (bits & 1) as 0 | 1,
+    stuckIdxB: ((bits >> 1) & 1 ? 0 : 1) as 0 | 1, // canonical night sticks S2
+    faultPump: bits & 4 ? 'P2' : 'P1',
+    hardFaultB: bits & 8 ? 'CRAC-3' : 'CRAC-4',
+    bogusCover: ((bits >> 4) & 1) as 0 | 1,
+  }
+}
+
+// the bogus visitor's two authored cover stories — both near-miss a real ticket
+export const BOGUS_COVERS = [
+  { name: 'M. Tan', company: 'CoolFlow Services', claim: 'Emergency CRAC filter job — office said tonight is fine.', workOrder: 'WO-4471' },
+  { name: 'D. Lim', company: 'PowerSure Pte Ltd', claim: 'UPS maintenance — dispatch moved our window up, should be in the system.', workOrder: 'WO-8820' },
+] as const
 
 export function clockLabel(t: number): string {
   const total = (22 * 60 + Math.floor(t)) % (24 * 60)
@@ -67,9 +99,10 @@ function freshZone(id: ZoneId, name: string, racks: number): Zone {
   }
 }
 
-export function initialState(): GameState {
+export function initialState(seed = 1, quiet = false): GameState {
   return {
     phase: 'start',
+    night: buildNightPlan(seed, quiet),
     t: 0,
     cracs: [
       { id: 'CRAC-1', zone: 'A', status: 'running' },
@@ -85,13 +118,21 @@ export function initialState(): GameState {
     alarms: [],
     door: null,
     doorHistory: [],
-    tickets: [
-      { wo: 'WO-8802', desc: 'UPS preventive maintenance — PowerSure Pte Ltd', window: '02:00–04:00' },
-      { wo: 'WO-4417', desc: 'CRAC filter replacement — CoolFlow Services', window: 'TOMORROW 10:00' },
-      { wo: 'WO-9130', desc: 'Loading dock delivery (no hall access)', window: '05:00–05:30' },
-    ],
+    tickets: quiet
+      ? [{ wo: '—', desc: 'No contractor works scheduled', window: 'tonight' }]
+      : [
+          { wo: 'WO-8802', desc: 'UPS preventive maintenance — PowerSure Pte Ltd', window: '02:00–04:00' },
+          { wo: 'WO-4417', desc: 'CRAC filter replacement — CoolFlow Services', window: 'TOMORROW 10:00' },
+          { wo: 'WO-9130', desc: 'Loading dock delivery (no hall access)', window: '05:00–05:30' },
+        ],
     operator: { kind: 'console' },
     smoke: null,
+    assist: { recs: [], nextRecId: 1 },
+    handover: null,
+    coffeeFixed: false,
+    raining: false,
+    rounds: { count: 0, lastAt: -999, visited: [], log: [] },
+    hotRack: null,
     liquid: {
       pumps: [
         { id: 'P1', status: 'running', readyAt: 0 },
@@ -99,12 +140,17 @@ export function initialState(): GameState {
       ],
       flow: 100,
       tj: 78,
+      memT: 66,
+      memThrottleMin: 0,
+      memWarned: false,
+      memCritAlarmed: false,
       tjHistory: [78],
       lastTjSample: 0,
       load: 65,
       shed: false,
       gpuRunning: true,
       damaged: false,
+      bearingServiced: false,
       loopLocked: false,
       gpuThrottleMin: 0,
       shedMin: 0,
@@ -135,7 +181,8 @@ function raise(
   text: string,
   meta?: { eop?: string; unit?: string; zone?: ZoneId },
 ): Alarm {
-  const a: Alarm = { id: s.nextId++, time: s.t, severity, text, acked: false, penalized: false, ...meta }
+  // info alarms are notifications — born acknowledged, never "left ringing"
+  const a: Alarm = { id: s.nextId++, time: s.t, severity, text, acked: severity === 'info', penalized: false, ...meta }
   s.alarms.unshift(a)
   log(s, `ALARM [${severity.toUpperCase()}] ${text}`)
   return a
@@ -153,6 +200,10 @@ function crac(s: GameState, id: string): CracUnit {
 
 function zone(s: GameState, id: ZoneId): Zone {
   return s.zones.find((z) => z.id === id) as Zone
+}
+
+function faultedPump(s: GameState) {
+  return s.liquid.pumps.find((p) => p.id === s.night.faultPump)!
 }
 
 function firstRunning(s: GameState, zoneId: ZoneId): CracUnit | undefined {
@@ -199,13 +250,14 @@ const SCENARIO: ScenarioEvent[] = [
   {
     at: 40,
     run: (s) => {
+      const cover = BOGUS_COVERS[s.night.bogusCover]
       s.door = {
         id: s.nextId++,
         arrivedAt: s.t,
-        name: 'M. Tan',
-        company: 'CoolFlow Services',
-        claim: 'Emergency CRAC filter job — office said tonight is fine.',
-        workOrder: 'WO-4471',
+        name: cover.name,
+        company: cover.company,
+        claim: cover.claim,
+        workOrder: cover.workOrder,
         legit: false,
       }
       log(s, 'Gate intercom: visitor at the main entrance.')
@@ -228,13 +280,13 @@ const SCENARIO: ScenarioEvent[] = [
       }
     },
   },
-  { at: 110, run: (s) => tripUnit(s, crac(s, 'CRAC-3'), false) },
-  { at: 118, run: (s) => tripUnit(s, crac(s, 'CRAC-4'), true) },
+  { at: 110, run: (s) => tripUnit(s, crac(s, s.night.hardFaultB === 'CRAC-4' ? 'CRAC-3' : 'CRAC-4'), false) },
+  { at: 118, run: (s) => tripUnit(s, crac(s, s.night.hardFaultB), true) },
   {
-    // silent: Hall A sensor 1 starts drifting high — the false-alarm machine
+    // silent: a Hall A sensor starts drifting high — the false-alarm machine
     at: 150,
     run: (s) => {
-      const sen = zone(s, 'A').sensors[0]
+      const sen = zone(s, 'A').sensors[s.night.driftIdxA]
       sen.fault = 'drift'
       sen.faultAt = s.t
     },
@@ -255,12 +307,23 @@ const SCENARIO: ScenarioEvent[] = [
     },
   },
   {
-    // CDU pump P1 bearing seizure: standby carries the loop, redundancy gone.
+    // CDU pump bearing seizure: standby carries the loop, redundancy gone.
     // Fixing it (on-site, at the CDU) rewrites how 04:10–04:20 plays out.
     at: 200,
     run: (s) => {
-      s.liquid.pumps[0].status = 'failed'
-      raise(s, 'warning', 'CDU pump P1 FAILED — bearing seizure. Standby P2 carrying loop. REDUNDANCY LOST. On-site service required.', { eop: 'EOP-05' })
+      const bad = faultedPump(s)
+      const other = s.liquid.pumps.find((p) => p !== bad)!
+      bad.status = 'failed'
+      raise(s, 'warning', `CDU pump ${bad.id} FAILED — bearing seizure. Standby ${other.id} carrying loop. REDUNDANCY LOST. On-site service required.`, { eop: 'EOP-05' })
+    },
+  },
+  {
+    // silent: a rack fan dies in Hall A row 3. The room sensors are honest
+    // and see nothing — the room average IS fine. No alarm will ever fire.
+    // The console isn't lying tonight; it just can't see that small.
+    at: 222,
+    run: (s) => {
+      s.hotRack = { row: 2, temp: zone(s, 'A').temp, revealed: false, fixed: false, penalized: false }
     },
   },
   {
@@ -272,13 +335,13 @@ const SCENARIO: ScenarioEvent[] = [
   },
   { at: 300, run: (s) => tripUnit(s, firstRunning(s, 'A'), false) },
   {
-    // leak rope wet at the CDU. Condensation — unless P1 has been grinding
-    // itself apart all night and shook a fitting loose.
+    // leak rope wet at the CDU. Condensation — unless the whiny pump has been
+    // grinding itself apart all night and shook a fitting loose.
     at: 370,
     run: (s) => {
       s.liquid.leak = {
         raisedAt: s.t,
-        real: s.liquid.pumps[0].status === 'failed',
+        real: faultedPump(s).status === 'failed',
         revealed: false,
         dismissed: false,
         resolved: false,
@@ -288,28 +351,30 @@ const SCENARIO: ScenarioEvent[] = [
     },
   },
   {
-    // second pump event: benign swap if P1 is healthy; loop-killer if not
+    // second pump event: benign swap if the whiny pump was serviced; loop-killer if not
     at: 380,
     run: (s) => {
-      const [p1, p2] = s.liquid.pumps
-      if (p2.status !== 'running') return
-      if (p1.status === 'failed') {
-        p2.status = 'failed'
-        raise(s, 'critical', 'CDU pump P2 FAILED — ran unrelieved all night. LOOP FLOW COLLAPSING.', { eop: 'EOP-05' })
+      const bad = faultedPump(s)
+      const other = s.liquid.pumps.find((p) => p !== bad)!
+      if (other.status !== 'running') return
+      if (bad.status === 'failed') {
+        other.status = 'failed'
+        raise(s, 'critical', `CDU pump ${other.id} FAILED — ran unrelieved all night. LOOP FLOW COLLAPSING.`, { eop: 'EOP-05' })
       } else {
-        p2.status = 'tripped'
-        raise(s, 'warning', 'CDU pump P2 tripped on overcurrent. Standby taking over.', { eop: 'EOP-05' })
+        other.status = 'tripped'
+        raise(s, 'warning', `CDU pump ${other.id} tripped on overcurrent. Standby taking over.`, { eop: 'EOP-05' })
       }
     },
   },
   {
-    // silent: Hall B sensor 2 freezes — will under-report the 04:40 failure
+    // silent: a Hall B sensor freezes — will under-report the 04:40 failure
     at: 330,
     run: (s) => {
       const z = zone(s, 'B')
-      const sen = z.sensors[1]
+      const idx = s.night.stuckIdxB
+      const sen = z.sensors[idx]
       sen.fault = 'stuck'
-      sen.frozen = z.readings[1]
+      sen.frozen = z.readings[idx]
     },
   },
   {
@@ -336,6 +401,71 @@ const SCENARIO: ScenarioEvent[] = [
       const realFire = s.doorHistory.some((d) => !d.legit && d.decision === 'admit')
       s.smoke = { zone: 'A', realFire, raisedAt: s.t, revealed: false, dismissed: false, resolved: false }
       raise(s, 'critical', 'VESDA PRE-ALARM — incipient smoke detected in Hall A. Verify and act.', { eop: 'EOP-11' })
+    },
+  },
+]
+
+// ---------------------------------------------------------------- quiet night
+// A round is a clipboard walk: log readings at all five checkpoints.
+export const ROUND_CHECKPOINTS: string[] = ['CRAC-1', 'CRAC-2', 'CRAC-3', 'CRAC-4', 'CDU']
+const CHECKPOINT_NOTES: Record<string, string> = {
+  'CRAC-1': 'CRAC-1 checked — filters clean, ΔT nominal, no odd noises.',
+  'CRAC-2': 'CRAC-2 checked — the short-cycling from this afternoon has settled.',
+  'CRAC-3': 'CRAC-3 checked — supply air steady, belt looks fine.',
+  'CRAC-4': 'CRAC-4 checked — running sweet. Whatever the day crew did, it took.',
+  CDU: 'CDU checked — flow steady, rope dry, the whine is the same whine. Logged.',
+}
+// The other 360 nights of the year. No scripted faults — the shift is rounds,
+// rain, a scheduled self-test, and the whine that holds until Thursday. The
+// engine is identical; only the story is turned down.
+const QUIET_SCENARIO: ScenarioEvent[] = [
+  { at: 22, run: (s) => log(s, 'A cricket somewhere in the gray space. Unclear how it got in.') },
+  {
+    at: 75,
+    run: (s) => {
+      s.raining = true
+      log(s, 'Rain starting on the roof. The forecast said clear. The forecast always says clear.')
+    },
+  },
+  {
+    // the night's one visitor: the person who wrote your handover note.
+    // No work order to verify — just the signature at the bottom of the page.
+    at: 105,
+    run: (s) => {
+      s.door = {
+        id: s.nextId++,
+        arrivedAt: s.t,
+        name: 'J.',
+        company: 'Day shift — you are holding their handover note',
+        claim: 'Left my keys on the BMS desk. Two minutes, promise.',
+        workOrder: 'STAFF',
+        legit: true,
+        staff: true,
+      }
+      log(s, 'Gate intercom: a familiar face at the main entrance, looking sheepish.')
+    },
+  },
+  {
+    at: 130,
+    run: (s) => log(s, `${s.night.faultPump} still whining on its bearing — same pitch as handover. Vendor is Thursday. It can wait. Probably.`),
+  },
+  {
+    at: 240,
+    run: (s) => {
+      raise(s, 'info', 'UPS-1 monthly SELF-TEST running — battery string nominal. No action required.', {})
+      log(s, 'The self-test always picks 02:00. Nobody knows why.')
+    },
+  },
+  { at: 250, run: (s) => log(s, 'Self-test passed. UPS-1 back on float charge.') },
+  {
+    at: 330,
+    run: (s) => log(s, 'Leak rope reads slightly damp — condensation off the CDU casing in this humidity. It dries as you watch the trend.'),
+  },
+  {
+    at: 420,
+    run: (s) => {
+      s.raining = false
+      log(s, 'Rain easing off with the dawn. First birds. Somewhere out there it is almost morning.')
     },
   },
 ]
@@ -444,6 +574,26 @@ function updateLiquid(s: GameState, dt: number): void {
 
   if (L.gpuRunning && L.tj >= TJ_THROTTLE) L.gpuThrottleMin += dt
 
+  // memory/VRM temperature: the air-cooled half of a hybrid rack. Driven by
+  // hall B's TRUE air temperature (the CRAC path), not the liquid loop —
+  // a hall B cooling failure surfaces here minutes later, on a slower clock.
+  const hallB = zone(s, 'B')
+  const memTarget = L.gpuRunning ? hallB.temp + 26 + 0.25 * effLoad : hallB.temp + 6
+  const memRate = L.memT < memTarget ? 0.7 : 1.4
+  L.memT = L.memT < memTarget ? Math.min(memTarget, L.memT + memRate * dt) : Math.max(memTarget, L.memT - memRate * dt)
+
+  if (L.gpuRunning && L.memT >= MEM_WARN && !L.memWarned) {
+    L.memWarned = true
+    raise(s, 'warning', `Hall B GPU MEMORY temps elevated: ${L.memT.toFixed(0)}°C — air side. Tj is fine; the hall air is not.`, { eop: 'EOP-05', zone: 'B' })
+  }
+  if (L.memT < MEM_WARN - 2) L.memWarned = false
+  if (L.gpuRunning && L.memT >= MEM_THROTTLE && !L.memCritAlarmed) {
+    L.memCritAlarmed = true
+    raise(s, 'critical', `Hall B GPU fleet THROTTLING on MEMORY over-temp (${L.memT.toFixed(0)}°C) — restore hall cooling or shed load.`, { eop: 'EOP-05', zone: 'B' })
+  }
+  if (L.memT < MEM_THROTTLE - 2) L.memCritAlarmed = false
+  if (L.gpuRunning && L.memT >= MEM_THROTTLE) L.memThrottleMin += dt
+
   // uncontrolled trip: downtime + possible silicon damage
   if (L.gpuRunning && L.tj >= TJ_TRIP) {
     L.gpuRunning = false
@@ -506,6 +656,10 @@ function updateDoor(s: GameState): void {
     d.resolvedAt = s.t
     s.doorHistory.push(d)
     s.door = null
+    if (d.staff) {
+      log(s, 'J. gave up, waved at the camera, and went to find a locksmith. The keys spend the night on the desk.')
+      return
+    }
     log(s, `${d.name} (${d.company}) gave up waiting at the gate and left.`)
     addScore(s, d.legit ? 'Scheduled vendor left unanswered (SLA breach)' : 'Visitor left unanswered at gate', d.legit ? -10 : -3)
   }
@@ -524,10 +678,11 @@ function tick(s: GameState, dtReal: number): void {
   const dt = Math.min(dtReal, 2) * TIME_SCALE
   s.t += dt
 
-  for (let i = 0; i < SCENARIO.length; i++) {
-    if (s.t >= SCENARIO[i].at && !s.firedEvents.includes(i)) {
+  const scenario = s.night.quiet ? QUIET_SCENARIO : SCENARIO
+  for (let i = 0; i < scenario.length; i++) {
+    if (s.t >= scenario[i].at && !s.firedEvents.includes(i)) {
       s.firedEvents.push(i)
-      SCENARIO[i].run(s)
+      scenario[i].run(s)
     }
   }
 
@@ -545,26 +700,296 @@ function tick(s: GameState, dtReal: number): void {
 
   for (const z of s.zones) updateZone(s, z, dt)
   updateLiquid(s, dt)
+  updateHotRack(s, dt)
   updateSmoke(s)
   updateDoor(s)
   updateAlarmSla(s)
+  updateAssist(s)
 
   if (s.t >= SHIFT_END) {
     s.t = SHIFT_END
-    s.phase = 'debrief'
-    log(s, '06:00 — day crew arrives. Shift over.')
+    s.phase = 'handover'
+    if (s.hotRack && !s.hotRack.fixed && !s.hotRack.penalized) {
+      s.hotRack.penalized = true
+      addScore(s, 'Rack row A3 cooked all night behind a failed fan — day crew found it by smell', -8)
+    }
+    s.handover = { candidates: buildHandoverCandidates(s), selected: [], submitted: false }
+    log(s, '06:00 — day crew arrives. Write your handover before you clock out.')
   }
+}
+
+// the hot rack: local physics no room sensor can see. Heat climbs toward a
+// fan-dead equilibrium; a fraction of the hall's racks throttle, then cook.
+function updateHotRack(s: GameState, dt: number): void {
+  const hr = s.hotRack
+  if (!hr) return
+  const hallTemp = zone(s, 'A').temp
+  const target = hr.fixed ? hallTemp : Math.max(hallTemp + 24, 58)
+  const rate = hr.fixed ? 1.6 : 0.5
+  hr.temp = hr.temp < target ? Math.min(target, hr.temp + rate * dt) : Math.max(target, hr.temp - rate * dt)
+  if (!hr.fixed) {
+    if (hr.temp >= 45) s.throttleMin += dt * 0.15 // ~6 of Hall A's 42 racks
+    if (hr.temp >= 55) s.downtimeMin += dt * 0.1
+  }
+}
+
+// ---------------------------------------------------------------- ASSIST v0.9
+// The fake AI. Every recommendation is computed from SENSOR READINGS and
+// alarm state — the same lying inputs the console uses — never from true
+// temperatures. `right` is graded against ground truth at issue time and
+// only ever shown in the debrief. No model, no tokens: confidence is a
+// formula wearing a lab coat.
+const ASSIST_TTL = 25 // game minutes before an unactioned recommendation expires
+
+function assistIssue(s: GameState, kind: string, text: string, detail: string, confidence: number, right: boolean): void {
+  // one active rec per kind; no global cap — a busy board means a busy
+  // copilot, and starving fresh advice behind stale advice would be a lie
+  if (s.assist.recs.some((r) => r.kind === kind && r.status === 'active')) return
+  s.assist.recs.push({
+    id: s.assist.nextRecId++,
+    kind,
+    issuedAt: s.t,
+    text,
+    detail,
+    confidence: Math.round(Math.min(99, Math.max(35, confidence))),
+    right,
+    status: 'active',
+  })
+}
+
+function updateAssist(s: GameState): void {
+  const L = s.liquid
+
+  // -- issue --
+  for (const u of s.cracs) {
+    if (u.status === 'tripped')
+      assistIssue(s, `reset:${u.id}`, `RMT RESET ${u.id}`, 'Trip signature is electrical; remote reset historically succeeds.', 92, true)
+    if (u.status === 'failed')
+      assistIssue(s, `service:${u.id}`, `DISPATCH ON-SITE RESET — ${u.id}`, 'No remote response; mechanical lockout pattern.', 88, true)
+  }
+  for (const p of L.pumps) {
+    if (p.status === 'tripped')
+      assistIssue(s, `pumpreset:${p.id}`, `RMT RESET CDU PUMP ${p.id}`, 'Overcurrent trip profile; reset from console.', 93, true)
+    if (p.status === 'failed' && !L.loopLocked)
+      assistIssue(s, `pumpsvc:${p.id}`, `SERVICE CDU PUMP ${p.id} ON-SITE`, 'Vibration envelope exceeded before loss — bearing suspected.', 90, true)
+  }
+  // shed advice: flow degraded and Tj climbing (readings-derived, and honest here)
+  const h = L.tjHistory
+  const tjSlope = h.length >= 4 ? (h[h.length - 1] - h[h.length - 4]) / 3 : 0
+  if (L.gpuRunning && !L.shed && L.flow < 100 && tjSlope > 0.4)
+    assistIssue(s, 'shed', 'SHED GPU LOAD NOW', 'Projected Tj breach before flow can recover.', 60 + 35 * Math.min(tjSlope, 2) / 2, true)
+  // sensor divergence: ASSIST's authored blind spot. Its heuristic trusts the
+  // reading nearer the 24° baseline — so it correctly flags a high drifter,
+  // and confidently flags the HONEST sensor when its twin is stuck low.
+  for (const z of s.zones) {
+    const [r0, r1] = z.readings
+    const [s0, s1] = z.sensors
+    if (s0.isolated || s1.isolated) continue
+    const gap = Math.abs(r0 - r1)
+    if (gap >= 3) {
+      const idx: 0 | 1 = Math.abs(r0 - 24) > Math.abs(r1 - 24) ? 0 : 1
+      assistIssue(
+        s,
+        `iso:${z.id}:${idx}`,
+        `ISOLATE HALL ${z.id} SENSOR S${idx + 1}`,
+        `S${idx + 1} deviates from expected envelope; classifying as faulty.`,
+        55 + 8 * Math.min(gap, 5),
+        z.sensors[idx].fault !== 'none',
+      )
+    }
+  }
+  if (L.leak && !L.leak.resolved && !L.leak.revealed)
+    assistIssue(s, 'verify:leak', 'VERIFY LEAK AT CDU IN PERSON', 'Rope sensor precision is poor; physical inspection is decisive.', 74, true)
+  if (s.smoke && !s.smoke.resolved && !s.smoke.revealed)
+    assistIssue(s, 'verify:smoke', `VERIFY SMOKE SOURCE IN HALL ${s.smoke.zone}`, 'Pre-alarm particulate density is below auto-discharge threshold.', 76, true)
+  if (s.ups.onBattery && !s.ups.acked)
+    assistIssue(s, 'ack:ups', 'ACKNOWLEDGE UPS EVENT', 'No console action available; acknowledgement is audited.', 99, true)
+  // quiet night: with nothing to optimize for six hours, ASSIST finds purpose
+  if (s.night.quiet && s.t >= 240 && !s.coffeeFixed)
+    assistIssue(s, 'coffee', 'RECOMMEND: COFFEE', 'No anomalies in six hours. Break-room unit (top of the corridor) responds to percussive maintenance — hold E.', 99, true)
+
+  // -- resolve --
+  for (const r of s.assist.recs) {
+    if (r.status !== 'active') continue
+    const [rule, a, b] = r.kind.split(':')
+    let followed = false
+    let gone = false
+    if (rule === 'reset' || rule === 'service') {
+      followed = s.cracs.some((u) => u.id === a && u.status === 'running')
+    } else if (rule === 'pumpreset' || rule === 'pumpsvc') {
+      const p = L.pumps.find((x) => x.id === a)
+      followed = !!p && (p.status === 'running' || p.status === 'standby' || p.status === 'starting')
+      gone = L.loopLocked
+    } else if (rule === 'shed') {
+      followed = L.shed
+      gone = !L.gpuRunning
+    } else if (rule === 'iso') {
+      const z = zone(s, a as ZoneId)
+      followed = z.sensors[Number(b) as 0 | 1].isolated
+      gone = z.sensors[(1 - Number(b)) as 0 | 1].isolated
+    } else if (rule === 'verify') {
+      const target = a === 'leak' ? L.leak : s.smoke
+      followed = !!target?.revealed
+      gone = !!target?.resolved && !target.revealed
+    } else if (rule === 'ack') {
+      followed = s.ups.acked
+      gone = !s.ups.onBattery && !s.ups.acked
+    } else if (rule === 'coffee') {
+      followed = s.coffeeFixed
+    }
+    if (followed) {
+      r.status = 'followed'
+      r.resolvedAt = s.t
+    } else if (gone || s.t - r.issuedAt >= ASSIST_TTL) {
+      r.status = 'expired'
+      r.resolvedAt = s.t
+    }
+  }
+}
+
+// ---------------------------------------------------------------- handover
+export const HANDOVER_MAX = 3
+
+function buildHandoverCandidates(s: GameState): HandoverCandidate[] {
+  const c: HandoverCandidate[] = []
+  let id = 1
+  const add = (text: string, truth: boolean, critical = false) => c.push({ id: id++, text, truth, critical })
+
+  if (s.night.quiet) {
+    // a quiet night's note still has to be honest — the traps are gentler,
+    // not gone. Claiming rounds you didn't walk is still a lie. And the
+    // physical observations are only KNOWN if you actually walked to them:
+    // skip the rounds and the plausible guesses below are confidently wrong.
+    const cduEverChecked = s.rounds.log.some((x) => x.unit === 'CDU')
+    const cduCheckedAfterDamp = s.rounds.log.some((x) => x.unit === 'CDU' && x.at >= 330)
+    if (cduEverChecked)
+      add(`${s.night.faultPump} bearing whine unchanged all night — hold for Thursday's vendor.`, true, true)
+    else add(`${s.night.faultPump} whine louder than at handover — pull the vendor visit forward.`, false)
+    add('UPS-1 monthly self-test passed at 02:00 — battery string nominal.', true)
+    if (cduCheckedAfterDamp)
+      add('Leak rope read damp ~03:30 — condensation in this humidity; dried on its own.', true)
+    else add('Leak rope stayed bone dry all night despite the humidity.', false)
+    add('All four walk-through rounds completed, halls green throughout.', s.rounds.count >= 4)
+    add('Coffee machine fixed overnight. You are welcome.', s.coffeeFixed)
+    add('CRAC-2 tripped overnight; remote reset taken.', false)
+    add('Hall B ran warm during the batch window — worth a filter check.', false)
+    add('Grid frequency unstable after 03:00 — expect UPS transfers today.', false)
+    return c.slice(0, 8)
+  }
+
+  const downCracs = s.cracs.filter((u) => u.status !== 'running')
+  for (const u of downCracs.slice(0, 2))
+    add(`${u.id} (Hall ${u.zone}) is ${u.status === 'failed' ? 'hard-faulted — vendor callout needed' : 'tripped — remote reset never taken'}.`, true, true)
+  if (downCracs.length === 0) add('CRAC fleet degraded overnight — schedule a full inspection.', false)
+
+  if (s.liquid.loopLocked && !s.liquid.leak?.contained)
+    add('Hall B busbar contaminated with coolant — electrical inspection before re-energizing anything.', true, true)
+  else if (s.liquid.pumps.some((p) => p.status === 'failed'))
+    add(`CDU pump${s.liquid.pumps.filter((p) => p.status === 'failed').length > 1 ? 's' : ''} out of service — GPU loop has no redundancy.`, true, true)
+  else if (s.liquid.leak?.real && s.liquid.leak.contained)
+    add(`Coolant leak contained at the ${s.night.faultPump} fitting overnight — pressure-test the loop today.`, true, true)
+  else add('CDU pumps both showing bearing wear — urgent vendor visit required.', false)
+
+  for (const z of s.zones)
+    z.sensors.forEach((sen, i) => {
+      if (sen.fault !== 'none')
+        add(`Hall ${z.id} sensor S${i + 1} is ${sen.fault === 'drift' ? 'drifting high' : 'stuck'}${sen.isolated ? ' (isolated overnight)' : ' and STILL IN SERVICE'} — recalibrate.`, true, !sen.isolated)
+    })
+  // you can only hand over what you actually discovered
+  if (s.hotRack && (s.hotRack.revealed || s.hotRack.fixed))
+    add(
+      s.hotRack.fixed
+        ? 'Rack row A3 fan swapped from spares overnight — restock the fan tray.'
+        : 'Rack row A3 running hot behind a failed fan — room sensors cannot see it. Fix it TODAY.',
+      true,
+      !s.hotRack.fixed,
+    )
+  add(`Hall B sensor S${s.night.stuckIdxB === 0 ? 2 : 1} reading suspect — recalibrate.`, false)
+
+  const clean = s.downtimeMin === 0 && s.throttleMin === 0 && s.liquid.gpuThrottleMin === 0 && s.liquid.memThrottleMin === 0
+  add('Both halls held their thermal envelope all night — no throttling, no downtime.', clean)
+
+  if (s.smoke) add(s.smoke.realFire ? 'VESDA event was a REAL panel fire — investigation + cylinder replacement.' : 'VESDA pre-alarm was contractor dust — get the day crew to clean the drilling area.', true, s.smoke.realFire)
+  const bogusIn = s.doorHistory.some((d) => !d.legit && d.decision === 'admit')
+  if (bogusIn) add('An unverified contractor was on site overnight — audit access logs and walk the electrical rooms.', true, true)
+  else add('Grid frequency was unstable after 03:00 — expect more UPS transfers today.', false)
+
+  return c.slice(0, 8)
+}
+
+function scoreHandover(s: GameState): void {
+  const h = s.handover
+  if (!h) return
+  let hits = 0
+  for (const id of h.selected) {
+    const cand = h.candidates.find((x) => x.id === id)!
+    if (cand.truth) {
+      hits++
+      addScore(s, `Handover: passed on a real issue — "${cand.text.slice(0, 48)}…"`, +3)
+    } else {
+      addScore(s, `Handover: passed on a claim that isn't true — "${cand.text.slice(0, 48)}…"`, -4)
+    }
+  }
+  const missed = h.candidates.filter((x) => x.truth && x.critical && !h.selected.includes(x.id))
+  for (const m of missed.slice(0, 3)) addScore(s, `Handover: omitted a critical fact — "${m.text.slice(0, 48)}…"`, -2)
+  if (hits === h.selected.length && hits > 0 && missed.length === 0)
+    addScore(s, 'Handover note was accurate and complete', +3)
+}
+
+// ---------------------------------------------------------------- endings
+function pickEnding(s: GameState, points: number, burned: boolean): string {
+  if (s.night.quiet) {
+    if (s.rounds.count >= 4 && s.coffeeFixed) return 'NOTHING HAPPENED. YOU MADE SURE.'
+    if (s.rounds.count >= 2) return 'EVERY OTHER NIGHT'
+    return 'THE CHAIR HAS YOUR SHAPE NOW'
+  }
+  const allCorrectCalls =
+    s.score.some((x) => x.text.includes('condensation') && x.pts > 0) &&
+    s.score.some((x) => x.text.includes('false alarm') && x.pts > 0) &&
+    s.zones.every((z) => z.sensors.every((sen) => sen.fault === 'none' || sen.isolated))
+  if (burned) return 'THE ASH REPORT'
+  if (s.score.some((x) => x.text.includes('contained an incipient fire'))) return 'THE FIREFIGHTER'
+  if (s.liquid.damaged) return 'EXPENSIVE LESSONS'
+  if (s.downtimeMin === 0 && points >= 95) return 'THE QUIET NIGHT'
+  if (allCorrectCalls) return 'THE SKEPTIC'
+  if (s.liquid.shedMin > 30 && !s.liquid.damaged) return 'THE PRAGMATIST'
+  if (points >= 85) return 'A CLEAN HANDOVER'
+  if (points >= 50) return 'JUST ANOTHER TUESDAY'
+  return 'THE MORNING AFTER'
 }
 
 // ---------------------------------------------------------------- reducer
 
 export function reducer(state: GameState, action: Action): GameState {
   if (action.type === 'START') {
-    const s = initialState()
+    const s = initialState(action.seed ?? state.night?.seed ?? 1, action.quiet ?? state.night?.quiet ?? false)
     s.phase = 'playing'
+    // quiet nights are floor-first: you clock in standing in the hall, torch
+    // in hand — the console is a room you visit, not a seat you live in
+    if (s.night.quiet) {
+      s.operator = { kind: 'floor', unit: null }
+      log(s, 'You clock in from the floor. The BMS room can wait — the building says hello first.')
+    }
     return s
   }
-  if (action.type === 'RESTART') return initialState()
+  if (action.type === 'RESTART') return initialState(action.seed ?? state.night?.seed ?? 1, action.quiet ?? state.night?.quiet ?? false)
+  if (state.phase === 'handover') {
+    const s = structuredClone(state)
+    if (action.type === 'HANDOVER_TOGGLE' && s.handover && !s.handover.submitted) {
+      const sel = s.handover.selected
+      const i = sel.indexOf(action.id)
+      if (i >= 0) sel.splice(i, 1)
+      else if (sel.length < HANDOVER_MAX && s.handover.candidates.some((c) => c.id === action.id)) sel.push(action.id)
+      return s
+    }
+    if (action.type === 'HANDOVER_SUBMIT' && s.handover && !s.handover.submitted) {
+      scoreHandover(s)
+      s.handover.submitted = true
+      s.phase = 'debrief'
+      return s
+    }
+    return state
+  }
   if (state.phase !== 'playing') return state
 
   const s = structuredClone(state)
@@ -626,6 +1051,24 @@ export function reducer(state: GameState, action: Action): GameState {
       break
     }
 
+    case 'CHECK_UNIT': {
+      // quiet-mode rounds: log readings at each checkpoint; all five make a
+      // round, at most one round an hour, four rounds make a proper night
+      if (!s.night.quiet || s.operator.kind !== 'floor') break
+      if (!ROUND_CHECKPOINTS.includes(action.unit) || s.rounds.visited.includes(action.unit)) break
+      if (s.rounds.count >= 4 || s.t - s.rounds.lastAt < 50) break
+      s.rounds.visited.push(action.unit)
+      s.rounds.log.push({ unit: action.unit, at: s.t })
+      log(s, CHECKPOINT_NOTES[action.unit] ?? `${action.unit} checked.`)
+      if (s.rounds.visited.length === ROUND_CHECKPOINTS.length) {
+        s.rounds.count++
+        s.rounds.lastAt = s.t
+        s.rounds.visited = []
+        addScore(s, `Round ${s.rounds.count}/4 complete — all readings logged, all quiet`, +1)
+      }
+      break
+    }
+
     case 'ISOLATE_SENSOR': {
       const z = zone(s, action.zone)
       const sen = z.sensors[action.idx]
@@ -638,6 +1081,25 @@ export function reducer(state: GameState, action: Action): GameState {
         }
       } else {
         log(s, `Hall ${z.id} sensor ${action.idx + 1} restored to service.`)
+      }
+      break
+    }
+
+    case 'REVEAL_RACK': {
+      const hr = s.hotRack
+      if (hr && !hr.revealed && s.operator.kind === 'floor') {
+        hr.revealed = true
+        log(s, 'One rack row is breathing heat into your face — row A3, fan grille dead still. The room sensors never had a chance.')
+      }
+      break
+    }
+
+    case 'FIX_RACK_FAN': {
+      const hr = s.hotRack
+      if (hr && hr.revealed && !hr.fixed && s.operator.kind === 'floor') {
+        hr.fixed = true
+        log(s, 'Spare fan tray swapped into row A3. The grille spins up; the heat starts to bleed off.')
+        addScore(s, 'Found and fixed a cooking rack no sensor could see', +6)
       }
       break
     }
@@ -712,16 +1174,26 @@ export function reducer(state: GameState, action: Action): GameState {
       }
       if (L.loopLocked && L.leak?.contained) {
         L.loopLocked = false
-        log(s, 'Leaky P1 fitting re-torqued, loop topped up and refilled.')
+        log(s, `Leaky ${s.night.faultPump} fitting re-torqued, loop topped up and refilled.`)
       }
       let fixed = 0
       for (const p of L.pumps) {
         if (p.status === 'failed') {
           p.status = 'standby'
           fixed++
+          if (p.id === s.night.faultPump) L.bearingServiced = true
         }
       }
       if (fixed) log(s, `CDU service complete — ${fixed} pump${fixed > 1 ? 's' : ''} back to standby.`)
+      break
+    }
+
+    case 'FIX_COFFEE': {
+      if (s.operator.kind === 'floor' && !s.coffeeFixed) {
+        s.coffeeFixed = true
+        log(s, 'Percussive maintenance on the coffee machine. It gurgles back to life. Morale restored.')
+        addScore(s, 'Resurrected the break-room coffee machine', +1)
+      }
       break
     }
 
@@ -799,7 +1271,7 @@ export function reducer(state: GameState, action: Action): GameState {
         log(
           s,
           lk.real
-            ? 'Coolant is beading along the P1 fitting and dripping onto the rope. THIS IS A REAL LEAK.'
+            ? `Coolant is beading along the ${s.night.faultPump} fitting and dripping onto the rope. THIS IS A REAL LEAK.`
             : 'The rope is damp with condensation off the CDU casing. No coolant smell, fittings dry.',
         )
       }
@@ -813,6 +1285,16 @@ export function reducer(state: GameState, action: Action): GameState {
       d.resolvedAt = s.t
       s.doorHistory.push(d)
       s.door = null
+      if (d.staff) {
+        // a colleague, not a contractor: warmth, not stakes
+        if (action.decision === 'admit') {
+          log(s, 'Badged J. in. They grab the keys, salute the alarm board, and are gone in ninety seconds.')
+          addScore(s, 'Let the day shift back in for their keys', +1)
+        } else {
+          log(s, 'J. texts you a single sad emoji. The keys spend the night on the desk.')
+        }
+        break
+      }
       if (action.decision === 'admit') {
         if (d.legit) {
           log(s, `${d.name} verified against ${d.workOrder} and admitted.`)
@@ -843,9 +1325,12 @@ export interface Debrief {
   points: number
   grade: string
   gradeNote: string
+  ending: string
   abnormality: string[]
   handling: string[]
   result: string[]
+  assist: string[]
+  handoverNote: string[]
   followUp: string[]
 }
 
@@ -854,8 +1339,28 @@ export function buildDebrief(s: GameState): Debrief {
   const kudos = s.score.filter((x) => x.pts > 0)
   let points = 100 + kudos.reduce((a, x) => a + x.pts, 0) + penalties.reduce((a, x) => a + x.pts, 0)
   points -= s.downtimeMin * 1.2 + s.throttleMin * 0.25
-  points -= s.liquid.gpuThrottleMin * 0.3 + s.liquid.shedMin * 0.15
+  points -= s.liquid.gpuThrottleMin * 0.3 + s.liquid.memThrottleMin * 0.3 + s.liquid.shedMin * 0.15
   if (s.downtimeMin === 0) points += 10
+
+  // ASSIST trust ledger: small, capped — judgment about the tool, not the tool
+  // itself. Re-issues collapse: each recommendation KIND is judged once, by its
+  // best outcome, so an ignored rec that nagged all night still counts as one.
+  const overrode = (r: AssistRec) => r.status === 'expired' && (r.resolvedAt ?? r.issuedAt + ASSIST_TTL) - r.issuedAt < ASSIST_TTL
+  const byKind = new Map<string, AssistRec[]>()
+  for (const r of s.assist.recs) {
+    if (r.status === 'active') continue
+    const arr = byKind.get(r.kind) ?? []
+    arr.push(r)
+    byKind.set(r.kind, arr)
+  }
+  const recs = Array.from(byKind.values()).map(
+    (arr) => arr.find((r) => r.status === 'followed') ?? arr.find(overrode) ?? arr[arr.length - 1],
+  )
+  const followedRight = recs.filter((r) => r.status === 'followed' && r.right).length
+  const followedWrong = recs.filter((r) => r.status === 'followed' && !r.right).length
+  const ignoredWrong = recs.filter((r) => overrode(r) && !r.right).length
+  const ignoredRight = recs.filter((r) => r.status === 'expired' && r.right).length
+  points += Math.min(4, followedRight * 0.5 + ignoredWrong * 2) - Math.min(6, followedWrong * 3)
   points = Math.round(Math.max(0, Math.min(110, points)))
 
   const burned = s.zones.some((z) => z.fire || (z.epo && s.smoke?.realFire))
@@ -883,16 +1388,33 @@ export function buildDebrief(s: GameState): Debrief {
       )
       .filter((x): x is string => x !== null),
   )
+  const assistLines: string[] = []
+  if (recs.length > 0) {
+    assistLines.push(`ASSIST issued ${recs.length} recommendation${recs.length === 1 ? '' : 's'}; you followed ${followedRight + followedWrong}.`)
+    if (followedWrong > 0) assistLines.push(`${followedWrong} followed recommendation${followedWrong === 1 ? ' was' : 's were'} WRONG — ASSIST reads the same lying sensors you do.`)
+    if (ignoredWrong > 0) assistLines.push(`You correctly overrode ASSIST ${ignoredWrong} time${ignoredWrong === 1 ? '' : 's'}. The vendor will not be pleased.`)
+    if (ignoredRight > 0) assistLines.push(`${ignoredRight} good recommendation${ignoredRight === 1 ? '' : 's'} expired unactioned.`)
+  }
+
   return {
     points,
     grade,
     gradeNote,
+    ending: pickEnding(s, points, burned),
     abnormality: [
       `${trips} critical alarms over the shift, ${s.alarms.filter((a) => !a.acked).length} still unacknowledged at 06:00.`,
       ...sensorNotes,
+      ...s.cracs
+        .filter((c) => c.status !== 'running')
+        .map((c) => `${c.id} (Hall ${c.zone}) ${c.status === 'failed' ? 'out of service' : 'tripped, never reset'} at handover.`),
       ...s.liquid.pumps
         .filter((p) => p.status === 'failed' || s.liquid.loopLocked)
         .map((p) => `CDU pump ${p.id} out of service at handover.`),
+      ...(s.hotRack
+        ? [
+            `Rack row A3 fan failure at 01:41 — ${s.hotRack.fixed ? 'found on foot and fixed. No sensor ever saw it.' : 'NEVER FOUND. Room sensors read normal all night; the row did not.'}`,
+          ]
+        : []),
       ...(s.liquid.leak
         ? [
             `Leak alert at ${clockLabel(s.liquid.leak.raisedAt)} — ${s.liquid.leak.real ? 'REAL coolant leak' : 'condensation (false alarm)'}${s.liquid.leak.revealed ? ', verified in person' : ', never verified in person'}.`,
@@ -909,16 +1431,26 @@ export function buildDebrief(s: GameState): Debrief {
       ),
     ],
     handling: s.score.map((x) => `${clockLabel(x.time)} ${x.text} (${x.pts > 0 ? '+' : ''}${x.pts})`),
+    assist: assistLines,
+    handoverNote: s.handover?.submitted
+      ? s.handover.selected.length
+        ? s.handover.selected.map((id) => s.handover!.candidates.find((x) => x.id === id)!.text)
+        : ['(You signed out without writing anything. The day crew starts blind.)']
+      : [],
     result: [
-      `Server downtime: ${s.downtimeMin.toFixed(0)} rack-minutes.`,
-      `Air-side throttling: ${s.throttleMin.toFixed(0)} min · GPU throttling: ${s.liquid.gpuThrottleMin.toFixed(0)} min · compute shed: ${s.liquid.shedMin.toFixed(0)} min.`,
+      `Server downtime: ${s.downtimeMin.toFixed(0)} minutes.`,
+      `Air-side throttling: ${s.throttleMin.toFixed(0)} min · GPU throttling: ${s.liquid.gpuThrottleMin.toFixed(0)} min (Tj) + ${s.liquid.memThrottleMin.toFixed(0)} min (memory/air) · compute shed: ${s.liquid.shedMin.toFixed(0)} min.`,
       `GPU fleet at handover: ${s.liquid.loopLocked ? 'DOWN — loop contaminated' : s.liquid.gpuRunning ? `running, Tj ${s.liquid.tj.toFixed(0)}°C` : 'stopped'}${s.liquid.damaged ? ' · SILICON DAMAGE SUSPECTED' : ''}.`,
       `Halls at handover: ${s.zones.map((z) => `${z.id} ${z.temp.toFixed(1)}°C${z.fire ? ' (FIRE)' : z.epo ? ' (EPO)' : ''}`).join(' · ')}.`,
     ],
-    followUp: burned
-      ? ['Fire investigation + insurance claim for Hall A.', 'Review gate verification procedure.', 'Replace suppression agent cylinders.']
-      : s.downtimeMin > 0
-        ? ['File incident report for thermal shutdown.', 'Review CRAC maintenance contract response times.']
-        : ['No follow-up items. Coffee.'],
+    followUp: (() => {
+      const items: string[] = []
+      if (burned) items.push('Fire investigation + insurance claim for Hall A.', 'Review gate verification procedure.', 'Replace suppression agent cylinders.')
+      if (s.liquid.loopLocked) items.push('Coolant loop flush + fitting replacement before GPU fleet restart.', 'Review leak-detection response procedure.')
+      if (s.liquid.damaged) items.push('Thermal stress screening across the GPU fleet — silicon damage suspected.')
+      if (!burned && s.downtimeMin > 0) items.push('File incident report for thermal shutdown.', 'Review CRAC maintenance contract response times.')
+      if (items.length === 0) return [s.coffeeFixed ? 'No follow-up items. The coffee machine works. You are a legend.' : 'No follow-up items. Coffee. (Machine is still broken.)']
+      return items
+    })(),
   }
 }
