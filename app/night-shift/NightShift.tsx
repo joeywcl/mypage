@@ -2,10 +2,10 @@
 
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import './night-shift.css'
-import { buildDebrief, clockLabel, consensusTemp, initialState, reducer, SHIFT_END } from './engine'
+import { buildDebrief, clockLabel, consensusTemp, initialState, NIGHT_SEEDS, reducer, SHIFT_END } from './engine'
 import { EOPS } from './eops'
 import FloorGame from './FloorGame'
-import type { Action, Alarm, DoorRequest, GameState, Zone, ZoneId } from './types'
+import type { Action, Alarm, AssistRec, DoorRequest, GameState, NightPlan, Zone, ZoneId } from './types'
 
 // ---------------------------------------------------------------- trend
 
@@ -15,10 +15,12 @@ function trendInfo(z: Zone): { label: string; level: '' | 'warn' | 'crit' } {
   const cur = h[h.length - 1]
   const slope = (cur - h[h.length - 4]) / 6 // °C per game-minute (samples 2 min apart)
   if (slope < 0.08) return { label: 'TREND: STABLE', level: '' }
+  // TTB = time-to-breach: the console's estimate of minutes until a threshold.
+  // Computed from sensor readings — only as honest as the sensor feeding it.
   const eta = (th: number) => Math.max(1, Math.round((th - cur) / slope))
   if (cur < 38)
-    return { label: `TREND +${slope.toFixed(1)}°/min · 38° in ~${eta(38)}m · 42° in ~${eta(42)}m`, level: 'warn' }
-  return { label: `TREND +${slope.toFixed(1)}°/min · SHUTDOWN 42° in ~${eta(42)}m`, level: 'crit' }
+    return { label: `TREND +${slope.toFixed(1)}°/min · TTB 38° ~${eta(38)}m · 42° ~${eta(42)}m`, level: 'warn' }
+  return { label: `TREND +${slope.toFixed(1)}°/min · TTB SHUTDOWN 42° ~${eta(42)}m`, level: 'crit' }
 }
 
 function Sparkline({
@@ -55,8 +57,8 @@ function tjTrend(L: { tjHistory: number[] }): { label: string; level: '' | 'warn
   const slope = (cur - h[h.length - 4]) / 3
   if (slope < 0.15) return { label: 'TREND: STABLE', level: '' }
   const eta = (th: number) => Math.max(1, Math.round((th - cur) / slope))
-  if (cur < 95) return { label: `TREND +${slope.toFixed(1)}°/min · THROTTLE 95° in ~${eta(95)}m · TRIP 105° in ~${eta(105)}m`, level: 'warn' }
-  return { label: `TREND +${slope.toFixed(1)}°/min · TRIP 105° in ~${eta(105)}m`, level: 'crit' }
+  if (cur < 95) return { label: `TREND +${slope.toFixed(1)}°/min · TTB THROTTLE 95° ~${eta(95)}m · TRIP 105° ~${eta(105)}m`, level: 'warn' }
+  return { label: `TREND +${slope.toFixed(1)}°/min · TTB TRIP 105° ~${eta(105)}m`, level: 'crit' }
 }
 
 // ---------------------------------------------------------------- sound
@@ -83,7 +85,76 @@ function useBeeper(muted: boolean) {
     osc.start()
     osc.stop(ctx.currentTime + ms / 1000)
   }
-  return { beep, ensure }
+  // sustained tones (floor hum, bearing whine): keyed oscillators that live
+  // until stopped. setTone re-tunes in place — no click, no re-trigger.
+  const tonesRef = useRef<Map<string, { osc: OscillatorNode; g: GainNode }>>(new Map())
+  const mutedRef = useRef(muted)
+  mutedRef.current = muted
+  const setTone = (id: string, freq: number, gain: number, type: OscillatorType = 'sine') => {
+    const ctx = ensure()
+    if (!ctx) return
+    const effGain = mutedRef.current ? 0 : gain
+    const existing = tonesRef.current.get(id)
+    if (existing) {
+      existing.osc.frequency.setTargetAtTime(freq, ctx.currentTime, 0.05)
+      existing.g.gain.setTargetAtTime(effGain, ctx.currentTime, 0.08)
+      return
+    }
+    const osc = ctx.createOscillator()
+    const g = ctx.createGain()
+    osc.type = type
+    osc.frequency.value = freq
+    g.gain.value = 0
+    g.gain.setTargetAtTime(effGain, ctx.currentTime, 0.15)
+    osc.connect(g).connect(ctx.destination)
+    osc.start()
+    tonesRef.current.set(id, { osc, g })
+  }
+  const stopTone = (id: string) => {
+    const ctx = ctxRef.current
+    const t = tonesRef.current.get(id)
+    if (!t || !ctx) return
+    t.g.gain.setTargetAtTime(0, ctx.currentTime, 0.08)
+    const osc = t.osc
+    setTimeout(() => { try { osc.stop() } catch {} }, 400)
+    tonesRef.current.delete(id)
+  }
+  const stopAllTones = () => { Array.from(tonesRef.current.keys()).forEach(stopTone) }
+  // looped filtered noise (rain on the roof) — one shared buffer, keyed like tones
+  const noiseRef = useRef<{ src: AudioBufferSourceNode; g: GainNode } | null>(null)
+  const setRain = (gain: number) => {
+    const ctx = ensure()
+    if (!ctx) return
+    const effGain = mutedRef.current ? 0 : gain
+    if (noiseRef.current) {
+      noiseRef.current.g.gain.setTargetAtTime(effGain, ctx.currentTime, 0.5)
+      return
+    }
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate)
+    const data = buf.getChannelData(0)
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
+    const src = ctx.createBufferSource()
+    src.buffer = buf
+    src.loop = true
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.frequency.value = 1100
+    const g = ctx.createGain()
+    g.gain.value = 0
+    g.gain.setTargetAtTime(effGain, ctx.currentTime, 1.2) // rain fades in like rain
+    src.connect(filter).connect(g).connect(ctx.destination)
+    src.start()
+    noiseRef.current = { src, g }
+  }
+  const stopRain = () => {
+    const ctx = ctxRef.current
+    if (!noiseRef.current || !ctx) return
+    noiseRef.current.g.gain.setTargetAtTime(0, ctx.currentTime, 1.5)
+    const src = noiseRef.current.src
+    setTimeout(() => { try { src.stop() } catch {} }, 4000)
+    noiseRef.current = null
+  }
+  return { beep, ensure, setTone, stopTone, stopAllTones, setRain, stopRain }
 }
 
 // ---------------------------------------------------------------- pieces
@@ -255,9 +326,10 @@ function LiquidPanel({
       <div className="ns-panel-body">
         <div className="ns-zone-top">
           <span className={`ns-temp ${tjLevel}`}>Tj {L.tj.toFixed(1)}°</span>
+          <span className={`ns-temp ${L.memT >= 88 ? 'crit' : L.memT >= 80 ? 'warn' : ''}`}>MEM {L.memT.toFixed(1)}°</span>
           <Sparkline history={L.tjHistory} lo={40} hi={110} crit={95} />
           <span className={`ns-zone-status ${L.loopLocked || !L.gpuRunning ? 'ns-neg' : ''}`}>
-            {L.loopLocked ? 'LOOP CONTAMINATED' : !L.gpuRunning ? 'FLEET STOPPED' : L.tj >= 95 ? 'THROTTLING' : 'NOMINAL'}
+            {L.loopLocked ? 'LOOP CONTAMINATED' : !L.gpuRunning ? 'FLEET STOPPED' : L.tj >= 95 ? 'THROTTLING (Tj)' : L.memT >= 88 ? 'THROTTLING (MEM)' : 'NOMINAL'}
           </span>
         </div>
         <div className={`ns-trend ${trend.level}`}>{trend.label}</div>
@@ -276,6 +348,11 @@ function LiquidPanel({
           )}
         </div>
         <div className="ns-liquid-row">
+          <span title="Share of GPU heat leaving via the liquid loop vs hall air — the hybrid hall's headline balance number">
+            HEAT SPLIT · LIQ {L.gpuRunning ? Math.round(86 * (L.flow / 100)) : 0}% / AIR {L.gpuRunning ? 100 - Math.round(86 * (L.flow / 100)) : 0}%
+          </span>
+        </div>
+        <div className="ns-liquid-row">
           <span>GPU LOAD {effLoad}%</span>
           {L.shed ? (
             <button className="ns-btn" onClick={() => dispatch({ type: 'RESTORE_LOAD' })}>RESTORE LOAD</button>
@@ -290,7 +367,7 @@ function LiquidPanel({
         </div>
         {hints && (
           <div className="ns-help">
-            These GPUs are liquid-cooled: no flow and chip temp (Tj) races in minutes, not tens of minutes. SHED LOAD pauses batch jobs — less heat, unhappy customers. E-STOP is a controlled stop: downtime but no damage. Letting physics trip the fleet at 105° costs downtime AND silicon.
+            These racks are hybrid. The die is liquid-cooled: no flow and Tj races in minutes. MEMORY still rides hall air: lose Hall B's CRACs and MEM creeps toward 88° on a slower clock — different path, different fix. TTB on any trend = time-to-breach, the console's countdown estimate. SHED LOAD buys time on both paths; E-STOP is a controlled stop (downtime, no damage). Letting physics trip the fleet at 105° costs downtime AND silicon.
           </div>
         )}
       </div>
@@ -394,6 +471,83 @@ function DoorPanel({ s, d, onDecide }: { s: GameState; d: DoorRequest | null; on
   )
 }
 
+// ---------------------------------------------------------------- ASSIST
+// The fake AI pane. It renders whatever the engine computed from sensor
+// readings — the UI adds nothing, which is the point: it looks like a
+// product and is three multiplications in a lab coat.
+function AssistPanel({ s, hints }: { s: GameState; hints: boolean }) {
+  const allActive = s.assist.recs.filter((r) => r.status === 'active')
+  const active = allActive.slice(-4) // freshest four; the rest are still live, just off-pane
+  const recent = s.assist.recs.filter((r) => r.status !== 'active').slice(-2)
+  return (
+    <div className="ns-panel">
+      <div className="ns-panel-title">ASSIST v0.9 · EARLY-WARNING COPILOT (BETA)</div>
+      <div className="ns-panel-body">
+        {active.length === 0 && (
+          <div style={{ color: 'var(--ns-dim)' }}>No recommendations. ASSIST is watching the same board you are.</div>
+        )}
+        {active.map((r) => (
+          <div key={r.id} className="ns-assist-rec">
+            <div className="ns-assist-head">
+              <span className="ns-assist-text">▸ {r.text}</span>
+              <span className="ns-assist-conf">CONF {r.confidence}%</span>
+            </div>
+            <div className="ns-assist-detail">{r.detail}</div>
+            <div className="ns-assist-bar"><span style={{ width: `${r.confidence}%` }} /></div>
+          </div>
+        ))}
+        {allActive.length > 4 && (
+          <div style={{ color: 'var(--ns-dim)', fontSize: 12 }}>+{allActive.length - 4} more queued — the board is having a night.</div>
+        )}
+        {recent.map((r) => (
+          <div key={r.id} className="ns-assist-rec done">
+            <span className="ns-assist-text">{r.status === 'followed' ? '✓' : '·'} {r.text}</span>
+            <span className="ns-assist-conf">{r.status.toUpperCase()}</span>
+          </div>
+        ))}
+        {hints && (
+          <div className="ns-help">
+            ASSIST reads the same sensors the alarms do — no more, no less. Its confidence is a number, not a promise. Following it and overriding it are both graded at 06:00.
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------- handover
+function HandoverScreen({ s, dispatch }: { s: GameState; dispatch: React.Dispatch<Action> }) {
+  const h = s.handover
+  if (!h) return null
+  const picked = h.selected.length
+  return (
+    <div className="ns-center ns-report">
+      <h1>06:00 — WRITE YOUR HANDOVER</h1>
+      <div className="ns-sub">THE DAY CREW READS THIS BEFORE THEY READ ANYTHING ELSE</div>
+      <div className="ns-brief ns-handover" style={{ textAlign: 'left' }}>
+        <div className="ns-handover-title">HANDOVER NOTE — NIGHT → DAY SHIFT</div>
+        <p>Pick up to {3} lines. Pass on what is true and matters; passing on a false claim sends the day crew chasing ghosts. What you leave out, nobody knows.</p>
+        {h.candidates.map((c) => {
+          const on = h.selected.includes(c.id)
+          return (
+            <button
+              key={c.id}
+              className={`ns-handover-item${on ? ' on' : ''}`}
+              onClick={() => dispatch({ type: 'HANDOVER_TOGGLE', id: c.id })}
+              disabled={!on && picked >= 3}
+            >
+              <span className="ns-handover-box">{on ? '☒' : '☐'}</span> {c.text}
+            </button>
+          )
+        })}
+      </div>
+      <p style={{ color: 'var(--ns-dim)' }}>{picked}/3 selected — you can also sign out with none, if you think nothing is worth passing on.</p>
+      <p style={{ color: 'var(--ns-dim)', fontSize: 13 }}>Graded like the rest of the shift: a true line that matters +3 · a false claim −4 · a critical fact left out −2. Short and honest beats long and hopeful.</p>
+      <button className="ns-btn big" onClick={() => dispatch({ type: 'HANDOVER_SUBMIT' })}>SIGN &amp; CLOCK OUT</button>
+    </div>
+  )
+}
+
 const STATS_KEY = 'night-shift-stats'
 interface ShiftStats {
   shifts: number
@@ -410,15 +564,39 @@ function readStats(): ShiftStats | null {
   }
 }
 
-function StartScreen({ onStart }: { onStart: () => void }) {
+function StartScreen({ night, onStart, onMode }: { night: NightPlan; onStart: (seed?: number, quiet?: boolean) => void; onMode: (quiet: boolean) => void }) {
   // read after mount: this page is statically exported, so the server render
   // has no localStorage and a direct read would mismatch on hydration
   const [stats, setStats] = useState<ShiftStats | null>(null)
   useEffect(() => setStats(readStats()), [])
+  if (night.quiet) {
+    return (
+      <div className="ns-center">
+        <h1>NIGHT SHIFT</h1>
+        <div className="ns-sub">TIER III FACILITY · 22:00 – 06:00 · QUIET NIGHT · NO PRESSURE. REALLY.</div>
+        <div className="ns-brief ns-handover">
+          <div className="ns-handover-title">HANDOVER NOTE — DAY SHIFT → NIGHT</div>
+          <p>Both halls green, board is clean, forecast says rain no matter what it says. Honestly? Should be a quiet one.</p>
+          <p>· <strong>CDU pump {night.faultPump}</strong> still has its bearing whine. Vendor confirmed for Thursday. Walk past it once in a while and make sure it still sounds like Tuesday.</p>
+          <p>· UPS-1 runs its <strong>monthly self-test</strong> around 02:00. It will tell you about it. It is very proud.</p>
+          <p>· Humid out — if the leak rope reads damp, it&rsquo;s the weather until proven otherwise.</p>
+          <p>· Do your <strong>rounds</strong> — clipboard walk, log readings at all four CRACs and the CDU (hold E at each). Four rounds is a proper night. Nobody checks. That&rsquo;s the point.</p>
+          <p>· Coffee machine is still broken. Some hero should do something about that. — J.</p>
+        </div>
+        <div className="ns-brief">
+          <p>No scripted disasters tonight. Walk the floor, listen to the rain, watch healthy trends do nothing. At 06:00 you still write the handover — a quiet night deserves an honest note too.</p>
+        </div>
+        <p style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button className="ns-btn big" onClick={() => onStart(undefined, true)}>▶ CLOCK IN</button>
+          <button className="ns-btn big amber" onClick={() => onMode(false)}>BACK TO THE BAD NIGHTS</button>
+        </p>
+      </div>
+    )
+  }
   return (
     <div className="ns-center">
       <h1>NIGHT SHIFT</h1>
-      <div className="ns-sub">TIER III FACILITY · 22:00 – 06:00 · YOU ARE THE ONLY OPERATOR ON SITE</div>
+      <div className="ns-sub">TIER III FACILITY · 22:00 – 06:00 · YOU ARE THE ONLY OPERATOR ON SITE · NIGHT #{night.seed}/{NIGHT_SEEDS}</div>
       {stats && stats.shifts > 0 && (
         <div className="ns-stats">SHIFT #{stats.shifts + 1} · PERSONAL BEST: {stats.bestGrade} ({stats.best}/100)</div>
       )}
@@ -426,7 +604,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
         <div className="ns-handover-title">HANDOVER NOTE — DAY SHIFT → NIGHT</div>
         <p>Quiet board at handover, both halls nominal. Few things for your radar:</p>
         <p>· <strong>CRAC-2</strong> (Hall A air-con) short-cycled twice this afternoon. If it trips again, the remote reset usually takes.</p>
-        <p>· <strong>CDU pump P1</strong> (the liquid loop feeding the GPU racks) has a bearing whine. Vendor is booked Thursday. Keep an ear on it — if it lets go, someone has to walk out there.</p>
+        <p>· <strong>CDU pump {night.faultPump}</strong> (the liquid loop feeding the GPU racks) has a bearing whine. Vendor is booked Thursday. Keep an ear on it — if it lets go, someone has to walk out there.</p>
         <p>· <strong>Two contractors expected tonight.</strong> Tickets are on the board. Check work orders character by character before badging anyone in — last month a guy talked his way into the wrong hall.</p>
         <p>· Humid out; the <strong>CDU leak rope</strong> loves condensation. Eyeball it before you panic — but never just assume.</p>
         <p>· Hall A&rsquo;s new room sensors were calibrated last month. Allegedly.</p>
@@ -437,24 +615,54 @@ function StartScreen({ onStart }: { onStart: () => void }) {
         <p><strong>ON THE FLOOR:</strong> WASD/arrows to move by torchlight, hold <strong>E</strong> to fix things, exit via the BMS room door. Out there you see the truth — but not the console. Nothing pauses.</p>
         <p>Keep the racks alive until 06:00. You&rsquo;ll be graded like a real post-mortem.</p>
       </div>
-      <button className="ns-btn big" onClick={onStart}>▶ CLOCK IN</button>
+      <p style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <button className="ns-btn big" onClick={() => onStart()}>▶ CLOCK IN</button>
+        {/* a replay tool, shown at replay time: appears once you've survived a
+            shift (or arrived via a shared ?night= link, already knowing why) */}
+        {((stats?.shifts ?? 0) >= 1 || night.seed !== 1) && (
+          <button
+            className="ns-btn big amber"
+            title="Same facility, different night: the faults move. 32 authored permutations, each fully deterministic and shareable by number."
+            onClick={() => onStart((night.seed % NIGHT_SEEDS) + 1)}
+          >
+            ⇄ DIFFERENT NIGHT
+          </button>
+        )}
+        <button
+          className="ns-btn big"
+          title="The other 360 nights of the year: no disasters — rounds, rain, and the coffee machine. The destress mode."
+          onClick={() => onMode(true)}
+        >
+          ☾ QUIET NIGHT
+        </button>
+      </p>
     </div>
   )
 }
 
-function DebriefScreen({ s, onRestart }: { s: GameState; onRestart: () => void }) {
+function DebriefScreen({ s, onRestart }: { s: GameState; onRestart: (seed?: number, quiet?: boolean) => void }) {
   const d = buildDebrief(s)
   const cls = d.points >= 85 ? 'good' : d.points >= 50 ? 'mid' : 'bad'
   const [copied, setCopied] = useState(false)
   const share = () => {
     const goodCalls = s.score.filter((x) => x.pts > 0).length
-    const text = [
-      `NIGHT SHIFT — data center operator sim`,
-      `Shift grade: ${d.grade} (${d.points}/100)`,
-      `${s.downtimeMin.toFixed(0)} rack-min downtime · ${goodCalls} good calls · ${s.alarms.filter((a) => !a.acked).length} alarms left ringing`,
-      `Can you keep the racks alive until 06:00?`,
-      `https://joeywcl.github.io/night-shift`,
-    ].join('\n')
+    const ringing = s.alarms.filter((a) => !a.acked).length
+    const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
+    const text = s.night.quiet
+      ? [
+          `NIGHT SHIFT — data center operator sim`,
+          `QUIET NIGHT · "${d.ending}" · grade ${d.grade} (${d.points}/100)`,
+          `${s.rounds.count}/4 rounds walked · ${s.coffeeFixed ? 'coffee machine fixed ☕' : 'coffee machine still broken'}`,
+          `Nothing happened. I made sure.`,
+          `https://joeywcl.github.io/night-shift`,
+        ].join('\n')
+      : [
+          `NIGHT SHIFT — data center operator sim`,
+          `NIGHT #${s.night.seed} · "${d.ending}" · grade ${d.grade} (${d.points}/100)`,
+          `${s.downtimeMin.toFixed(0)} min downtime · ${plural(goodCalls, 'good call')} · ${plural(ringing, 'alarm')} left ringing`,
+          `Can you survive my night?`,
+          `https://joeywcl.github.io/night-shift?night=${s.night.seed}`,
+        ].join('\n')
     navigator.clipboard
       ?.writeText(text)
       .then(() => {
@@ -466,9 +674,16 @@ function DebriefScreen({ s, onRestart }: { s: GameState; onRestart: () => void }
   return (
     <div className="ns-center ns-report">
       <h1>AFTER-ACTION REPORT</h1>
-      <div className="ns-sub">SHIFT 22:00–06:00 · OPERATOR: YOU</div>
+      <div className="ns-sub">SHIFT 22:00–06:00 · {s.night.quiet ? 'QUIET NIGHT' : `NIGHT #${s.night.seed}`} · OPERATOR: YOU</div>
+      <div className="ns-ending">&ldquo;{d.ending}&rdquo;</div>
       <div className={`ns-grade ${cls}`}>{d.grade}</div>
       <p>{d.points} / 100 — {d.gradeNote}</p>
+      {d.handoverNote.length > 0 && (
+        <>
+          <h3>YOUR HANDOVER NOTE</h3>
+          <ul>{d.handoverNote.map((x, i) => <li key={i}>{x}</li>)}</ul>
+        </>
+      )}
       <h3>ABNORMALITY</h3>
       <ul>{d.abnormality.map((x, i) => <li key={i}>{x}</li>)}</ul>
       <h3>HANDLING</h3>
@@ -478,12 +693,23 @@ function DebriefScreen({ s, onRestart }: { s: GameState; onRestart: () => void }
           <li key={i} className={x.includes('(+') ? 'ns-pos' : 'ns-neg'}>{x}</li>
         ))}
       </ul>
+      {d.assist.length > 0 && (
+        <>
+          <h3>ASSIST TRUST LEDGER</h3>
+          <ul>{d.assist.map((x, i) => <li key={i}>{x}</li>)}</ul>
+        </>
+      )}
       <h3>RESULT</h3>
       <ul>{d.result.map((x, i) => <li key={i}>{x}</li>)}</ul>
       <h3>FOLLOW-UP</h3>
       <ul>{d.followUp.map((x, i) => <li key={i}>{x}</li>)}</ul>
       <p style={{ marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <button className="ns-btn big" onClick={onRestart}>RUN IT BACK</button>
+        <button className="ns-btn big" onClick={() => onRestart()}>RUN IT BACK</button>
+        {s.night.quiet ? (
+          <button className="ns-btn big" title="Back to the worst night of the year" onClick={() => onRestart(undefined, false)}>⚠ BACK TO THE BAD NIGHTS</button>
+        ) : (
+          <button className="ns-btn big" title="Same facility, different faults" onClick={() => onRestart((s.night.seed % NIGHT_SEEDS) + 1)}>⇄ DIFFERENT NIGHT</button>
+        )}
         <button className="ns-btn big amber" onClick={share}>{copied ? 'COPIED ✓' : 'COPY RESULT'}</button>
       </p>
     </div>
@@ -493,12 +719,22 @@ function DebriefScreen({ s, onRestart }: { s: GameState; onRestart: () => void }
 // ---------------------------------------------------------------- main
 
 export default function NightShift() {
-  const [s, dispatch] = useReducer(reducer, undefined, initialState)
+  const [s, dispatch] = useReducer(reducer, undefined, () => initialState())
   const [muted, setMuted] = useState(false)
   const [hints, setHints] = useState(true)
   const [eopView, setEopView] = useState<{ eopId: string; alarmId: number } | null>(null)
-  const { beep, ensure } = useBeeper(muted)
-  const prev = useRef({ critCount: 0, doorId: 0, doorBuzzT: 0 })
+  const { beep, ensure, setTone, stopTone, stopAllTones, setRain, stopRain } = useBeeper(muted)
+  const prev = useRef({ critCount: 0, warnCount: 0, recCount: 0, doorId: 0, doorBuzzT: 0 })
+
+  // shareable nights: ?night=N loads that exact permutation (static export —
+  // read after mount to avoid hydration mismatch)
+  useEffect(() => {
+    try {
+      const n = Number(new URLSearchParams(window.location.search).get('night'))
+      if (n >= 1 && n <= NIGHT_SEEDS && n !== initialState().night.seed) dispatch({ type: 'RESTART', seed: n })
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (s.phase !== 'playing') return
@@ -519,11 +755,12 @@ export default function NightShift() {
     return () => clearInterval(id)
   }, [s.phase])
 
-  // persist shift count + personal best once per debrief
+  // persist shift count + personal best once per debrief — scripted nights
+  // only: a quiet S is a lovely evening, not a high score
   const savedRef = useRef(false)
   useEffect(() => {
     if (s.phase === 'playing') savedRef.current = false
-    if (s.phase !== 'debrief' || savedRef.current) return
+    if (s.phase !== 'debrief' || savedRef.current || s.night.quiet) return
     savedRef.current = true
     try {
       const d = buildDebrief(s)
@@ -537,7 +774,7 @@ export default function NightShift() {
     } catch {}
   }, [s])
 
-  // sound cues on new criticals / gate arrivals
+  // sound cues on new criticals / warnings / gate arrivals / ASSIST recs
   useEffect(() => {
     const crit = s.alarms.filter((a) => a.severity === 'critical' && !a.acked).length
     if (crit > prev.current.critCount) {
@@ -545,6 +782,12 @@ export default function NightShift() {
       setTimeout(() => beep(880, 120), 180)
     }
     prev.current.critCount = crit
+    const warn = s.alarms.filter((a) => a.severity === 'warning' && !a.acked).length
+    if (warn > prev.current.warnCount) beep(587, 140, 0.03)
+    prev.current.warnCount = warn
+    const recCount = s.assist.recs.length
+    if (recCount > prev.current.recCount) beep(1319, 70, 0.02)
+    prev.current.recCount = recCount
     const doorId = s.door?.id ?? 0
     if (doorId && doorId !== prev.current.doorId) {
       beep(220, 350, 0.05)
@@ -557,12 +800,49 @@ export default function NightShift() {
     }
     prev.current.doorId = doorId
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s.alarms, s.door])
+  }, [s.alarms, s.door, s.assist.recs.length])
+
+  // floor ambience: room hum + GPU layer while out there; silence at console
+  const onFloor = s.phase === 'playing' && s.operator.kind === 'floor'
+  useEffect(() => {
+    if (onFloor) {
+      setTone('hum', 52, 0.015)
+      return () => { stopTone('hum'); stopTone('gpu'); stopTone('whine') }
+    }
+    stopAllTones()
+    return undefined
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onFloor])
+  useEffect(() => {
+    if (!onFloor) return
+    if (s.liquid.gpuRunning) setTone('gpu', 121, 0.01)
+    else stopTone('gpu')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onFloor, s.liquid.gpuRunning])
+
+  // rain on the roof — audible everywhere, a little louder out on the floor
+  useEffect(() => {
+    if (s.phase === 'playing' && s.raining) setRain(onFloor ? 0.014 : 0.007)
+    else stopRain()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [s.phase, s.raining, onFloor])
 
   if (s.phase === 'start') {
     return (
       <div className="ns-root ns-flicker">
-        <StartScreen onStart={() => { ensure(); dispatch({ type: 'START' }) }} />
+        <StartScreen
+          night={s.night}
+          onStart={(seed, quiet) => { ensure(); dispatch({ type: 'START', seed, quiet }) }}
+          onMode={(quiet) => dispatch({ type: 'RESTART', quiet })}
+        />
+      </div>
+    )
+  }
+
+  if (s.phase === 'handover') {
+    return (
+      <div className="ns-root">
+        <HandoverScreen s={s} dispatch={dispatch} />
       </div>
     )
   }
@@ -570,7 +850,7 @@ export default function NightShift() {
   if (s.phase === 'debrief') {
     return (
       <div className="ns-root">
-        <DebriefScreen s={s} onRestart={() => dispatch({ type: 'RESTART' })} />
+        <DebriefScreen s={s} onRestart={(seed, quiet) => dispatch({ type: 'RESTART', seed, quiet })} />
       </div>
     )
   }
@@ -583,8 +863,14 @@ export default function NightShift() {
         <FloorGame
           s={s}
           beep={beep}
+          setTone={setTone}
+          stopTone={stopTone}
           onRepair={(unit) => dispatch({ type: 'REPAIR_DONE', unit })}
           onRepairPumps={() => dispatch({ type: 'REPAIR_PUMPS' })}
+          onFixCoffee={() => dispatch({ type: 'FIX_COFFEE' })}
+          onCheck={(unit) => dispatch({ type: 'CHECK_UNIT', unit })}
+          onRevealRack={() => dispatch({ type: 'REVEAL_RACK' })}
+          onFixRackFan={() => dispatch({ type: 'FIX_RACK_FAN' })}
           onReveal={() => dispatch({ type: 'REVEAL_SMOKE' })}
           onRevealLeak={() => dispatch({ type: 'REVEAL_LEAK' })}
           onReturn={() => dispatch({ type: 'RETURN' })}
@@ -593,6 +879,7 @@ export default function NightShift() {
       <div className="ns-header">
         <span className="ns-title">NIGHT SHIFT</span>
         <span className="ns-clock">{clockLabel(s.t)}</span>
+        <span style={{ color: 'var(--ns-dim)' }}>{s.night.quiet ? '☾ QUIET' : `N#${s.night.seed}`}{s.raining ? ' · RAIN' : ''}</span>
         <div className="ns-progress"><div style={{ width: `${(s.t / SHIFT_END) * 100}%` }} /></div>
         {s.door && (
           <button
@@ -637,6 +924,7 @@ export default function NightShift() {
               )}
             </div>
           </div>
+          <AssistPanel s={s} hints={hints} />
         </div>
 
         <div>

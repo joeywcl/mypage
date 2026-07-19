@@ -336,3 +336,76 @@
     animation: none;
   }
 }
+
+/* ===== ASSIST v0.9 pane ===== */
+.ns-assist-rec {
+  border: 1px solid var(--ns-line);
+  border-left: 3px solid var(--ns-amber);
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  background: rgba(255, 179, 71, 0.04);
+}
+.ns-assist-rec.done {
+  border-left-color: var(--ns-dim);
+  background: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--ns-dim);
+}
+.ns-assist-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+.ns-assist-text { font-weight: 700; }
+.ns-assist-conf {
+  color: var(--ns-amber);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.ns-assist-detail {
+  color: var(--ns-dim);
+  font-size: 12px;
+  margin: 2px 0 4px;
+}
+.ns-assist-bar {
+  height: 4px;
+  border: 1px solid var(--ns-line);
+}
+.ns-assist-bar span {
+  display: block;
+  height: 100%;
+  background: var(--ns-amber);
+  opacity: 0.7;
+}
+
+/* ===== handover screen ===== */
+.ns-handover-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 1px solid var(--ns-line);
+  color: var(--ns-green);
+  font: inherit;
+  padding: 8px 10px;
+  margin: 6px 0;
+  cursor: pointer;
+}
+.ns-handover-item:hover:not(:disabled) { border-color: var(--ns-amber); }
+.ns-handover-item.on {
+  border-color: var(--ns-amber);
+  background: rgba(255, 179, 71, 0.08);
+}
+.ns-handover-item:disabled { opacity: 0.45; cursor: not-allowed; }
+.ns-handover-box { color: var(--ns-amber); margin-right: 6px; }
+
+/* ===== named ending ===== */
+.ns-ending {
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  color: var(--ns-amber);
+  margin: 10px 0 2px;
+}
