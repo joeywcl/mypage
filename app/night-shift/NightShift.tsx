@@ -367,7 +367,7 @@ function LiquidPanel({
         </div>
         {hints && (
           <div className="ns-help">
-            These racks are hybrid. The die is liquid-cooled: no flow and Tj races in minutes. MEMORY still rides hall air: lose Hall B's CRACs and MEM creeps toward 88° on a slower clock — different path, different fix. TTB on any trend = time-to-breach, the console's countdown estimate. SHED LOAD buys time on both paths; E-STOP is a controlled stop (downtime, no damage). Letting physics trip the fleet at 105° costs downtime AND silicon.
+            These racks are hybrid. The die is liquid-cooled: no flow and Tj races in minutes. MEMORY still rides hall air: lose Hall B&rsquo;s CRACs and MEM creeps toward 88° on a slower clock — different path, different fix. TTB on any trend = time-to-breach, the console&rsquo;s countdown estimate. SHED LOAD buys time on both paths; E-STOP is a controlled stop (downtime, no damage). Letting physics trip the fleet at 105° costs downtime AND silicon.
           </div>
         )}
       </div>
