@@ -480,3 +480,47 @@ import { act, assert, initialState, runTo } from './harness'
   const b = act(initialState(), { type: 'START' })
   assert(b.tickets.length === 3, 'L16: scripted ticket board keeps its three work orders')
 }
+
+// --- L17: quiet grades are earned, never punished
+{
+  const CPS = ['CRAC-1', 'CRAC-2', 'CRAC-3', 'CRAC-4', 'CDU']
+  const doRound = (st: ReturnType<typeof initialState>) => {
+    let x = act(st, { type: 'WALK' })
+    for (const u of CPS) x = act(x, { type: 'CHECK_UNIT', unit: u })
+    return act(x, { type: 'RETURN' })
+  }
+  // chair night: zero input → grade B, never lower
+  let z = act(initialState(1, true), { type: 'START' })
+  z = runTo(z, 480)
+  z = act(z, { type: 'HANDOVER_SUBMIT' })
+  const zb = buildDebrief(z)
+  assert(zb.grade === 'B' && zb.ending === 'THE CHAIR HAS YOUR SHAPE NOW', 'L17: warming the chair earns a B, not an S')
+
+  // half a night of care → A
+  let h = act(initialState(1, true), { type: 'START' })
+  h = doRound(h)
+  h = runTo(h, 120)
+  h = doRound(h)
+  h = runTo(h, 480)
+  h = act(h, { type: 'HANDOVER_SUBMIT' })
+  assert(buildDebrief(h).grade === 'A', 'L17: two rounds is an A night')
+
+  // full care → S; but a false claim in the note drops the tier
+  let f = act(initialState(1, true), { type: 'START' })
+  f = act(f, { type: 'WALK' })
+  f = act(f, { type: 'FIX_COFFEE' })
+  f = act(f, { type: 'RETURN' })
+  f = doRound(f)
+  for (const t of [120, 220, 320]) {
+    f = runTo(f, t)
+    f = doRound(f)
+  }
+  f = runTo(f, 480)
+  const honest = structuredClone(f)
+  const lie = f.handover!.candidates.find((c) => !c.truth)!
+  f = act(f, { type: 'HANDOVER_TOGGLE', id: lie.id })
+  f = act(f, { type: 'HANDOVER_SUBMIT' })
+  assert(buildDebrief(f).grade === 'A', 'L17: a perfect night with a lie in the note is an A, not an S')
+  const hs = act(honest, { type: 'HANDOVER_SUBMIT' })
+  assert(buildDebrief(hs).grade === 'S', 'L17: full rounds + coffee + honest note earns the S')
+}

@@ -409,3 +409,56 @@
   color: var(--ns-amber);
   margin: 10px 0 2px;
 }
+
+/* ===== visual juice: motion that means something ===== */
+/* a new alarm announces itself once, then behaves */
+@keyframes ns-alarm-in {
+  0% { box-shadow: inset 0 0 0 2px var(--ns-red); background: rgba(255, 92, 92, 0.14); }
+  100% { box-shadow: inset 0 0 0 0 transparent; }
+}
+.ns-alarm { animation: ns-alarm-in 0.9s ease-out 1; }
+
+/* clock-in: the console powers on like the CRT it is */
+@keyframes ns-poweron-sweep {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes ns-poweron-fade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.ns-poweron {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: rgba(6, 16, 9, 0.55);
+  animation: ns-poweron-fade 0.9s ease-out 1 forwards;
+}
+.ns-poweron::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: linear-gradient(to bottom, transparent, rgba(76, 240, 122, 0.28), transparent);
+  animation: ns-poweron-sweep 0.85s cubic-bezier(0.2, 0.7, 0.4, 1) 1 forwards;
+}
+
+/* the grade lands like a stamp */
+@keyframes ns-grade-stamp {
+  0% { transform: scale(1.7); opacity: 0; }
+  60% { transform: scale(0.94); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.ns-grade { animation: ns-grade-stamp 0.38s cubic-bezier(0.2, 0.9, 0.3, 1.2) 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-alarm,
+  .ns-grade,
+  .ns-poweron,
+  .ns-poweron::after {
+    animation: none;
+  }
+  .ns-poweron { display: none; }
+}

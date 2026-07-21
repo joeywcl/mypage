@@ -548,6 +548,26 @@ function HandoverScreen({ s, dispatch }: { s: GameState; dispatch: React.Dispatc
   )
 }
 
+// leave mid-shift: two clicks, in fiction, no browser dialogs. The first
+// click arms; ignoring it for a few seconds stands you back down.
+function WalkOutButton({ onConfirm }: { onConfirm: () => void }) {
+  const [armed, setArmed] = useState(false)
+  useEffect(() => {
+    if (!armed) return
+    const t = setTimeout(() => setArmed(false), 3500)
+    return () => clearTimeout(t)
+  }, [armed])
+  return (
+    <button
+      className={`ns-btn${armed ? ' red' : ''}`}
+      title="Abandon the shift and return to the start screen. Nothing is saved; the night forgets you."
+      onClick={() => (armed ? onConfirm() : setArmed(true))}
+    >
+      {armed ? 'SURE? SHIFT ENDS' : 'WALK OUT'}
+    </button>
+  )
+}
+
 const STATS_KEY = 'night-shift-stats'
 interface ShiftStats {
   shifts: number
@@ -651,9 +671,9 @@ function DebriefScreen({ s, onRestart }: { s: GameState; onRestart: (seed?: numb
     const text = s.night.quiet
       ? [
           `NIGHT SHIFT — data center operator sim`,
-          `QUIET NIGHT · "${d.ending}" · grade ${d.grade} (${d.points}/100)`,
+          `QUIET NIGHT · "${d.ending}" · grade ${d.grade}`,
           `${s.rounds.count}/4 rounds walked · ${s.coffeeFixed ? 'coffee machine fixed ☕' : 'coffee machine still broken'}`,
-          `Nothing happened. I made sure.`,
+          d.grade === 'S' ? `Nothing happened. I made sure.` : `Nothing happened. It made sure of itself.`,
           `https://joeywcl.github.io/night-shift`,
         ].join('\n')
       : [
@@ -677,7 +697,17 @@ function DebriefScreen({ s, onRestart }: { s: GameState; onRestart: (seed?: numb
       <div className="ns-sub">SHIFT 22:00–06:00 · {s.night.quiet ? 'QUIET NIGHT' : `NIGHT #${s.night.seed}`} · OPERATOR: YOU</div>
       <div className="ns-ending">&ldquo;{d.ending}&rdquo;</div>
       <div className={`ns-grade ${cls}`}>{d.grade}</div>
-      <p>{d.points} / 100 — {d.gradeNote}</p>
+      {s.night.quiet ? (
+        <p>
+          {d.gradeNote}
+          <br />
+          <span style={{ color: 'var(--ns-dim)' }}>
+            {s.rounds.count}/4 rounds · coffee {s.coffeeFixed ? 'fixed' : 'still broken'} · graded on care, not survival — nothing can go wrong out here
+          </span>
+        </p>
+      ) : (
+        <p>{d.points} / 100 — {d.gradeNote}</p>
+      )}
       {d.handoverNote.length > 0 && (
         <>
           <h3>YOUR HANDOVER NOTE</h3>
@@ -725,6 +755,21 @@ export default function NightShift() {
   const [eopView, setEopView] = useState<{ eopId: string; alarmId: number } | null>(null)
   const { beep, ensure, setTone, stopTone, stopAllTones, setRain, stopRain } = useBeeper(muted)
   const prev = useRef({ critCount: 0, warnCount: 0, recCount: 0, doorId: 0, doorBuzzT: 0 })
+
+  // clock-in moment: the console powers on like the CRT it is (once, and
+  // never for players who asked for reduced motion — CSS hides it for them)
+  const [powerOn, setPowerOn] = useState(false)
+  const prevPhase = useRef(s.phase)
+  useEffect(() => {
+    if (prevPhase.current === 'start' && s.phase === 'playing') {
+      setPowerOn(true)
+      const t = setTimeout(() => setPowerOn(false), 950)
+      prevPhase.current = s.phase
+      return () => clearTimeout(t)
+    }
+    prevPhase.current = s.phase
+    return undefined
+  }, [s.phase])
 
   // shareable nights: ?night=N loads that exact permutation (static export —
   // read after mount to avoid hydration mismatch)
@@ -859,6 +904,7 @@ export default function NightShift() {
 
   return (
     <div className="ns-root ns-flicker">
+      {powerOn && <div className="ns-poweron" aria-hidden="true" />}
       {s.operator.kind === 'floor' && (
         <FloorGame
           s={s}
@@ -903,6 +949,7 @@ export default function NightShift() {
         <button className="ns-btn" onClick={() => { ensure(); setMuted((m) => !m) }}>
           {muted ? 'UNMUTE' : 'MUTE'}
         </button>
+        <WalkOutButton onConfirm={() => dispatch({ type: 'RESTART' })} />
       </div>
 
       <div className="ns-grid">

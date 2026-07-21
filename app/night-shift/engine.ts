@@ -1065,6 +1065,8 @@ export function reducer(state: GameState, action: Action): GameState {
         s.rounds.lastAt = s.t
         s.rounds.visited = []
         addScore(s, `Round ${s.rounds.count}/4 complete — all readings logged, all quiet`, +1)
+        if (s.rounds.count < 4)
+          log(s, `Clipboard signed. Next round is due around ${clockLabel(s.t + 50)} — until then the night is yours, wherever you spend it.`)
       }
       break
     }
@@ -1364,8 +1366,8 @@ export function buildDebrief(s: GameState): Debrief {
   points = Math.round(Math.max(0, Math.min(110, points)))
 
   const burned = s.zones.some((z) => z.fire || (z.epo && s.smoke?.realFire))
-  const grade = points >= 95 ? 'S' : points >= 85 ? 'A' : points >= 70 ? 'B' : points >= 50 ? 'C' : 'F'
-  const gradeNote =
+  let grade = points >= 95 ? 'S' : points >= 85 ? 'A' : points >= 70 ? 'B' : points >= 50 ? 'C' : 'F'
+  let gradeNote =
     grade === 'S'
       ? 'Flawless. The AI-SOP team wants to interview you as training data.'
       : grade === 'A'
@@ -1377,6 +1379,22 @@ export function buildDebrief(s: GameState): Debrief {
             : s.zones.some((z) => z.fire)
               ? 'The fire brigade has questions. So do the lawyers.'
               : 'EPO-adjacent performance. HR would like a word.'
+
+  // quiet nights grade CARE, not survival: nothing can go wrong, so the grade
+  // is earned from rounds, the coffee, and an honest note. Floor is B — the
+  // destress contract holds, you just don't get the S for warming the chair.
+  if (s.night.quiet) {
+    const falseClaims =
+      s.handover?.selected.filter((id) => !s.handover!.candidates.find((c) => c.id === id)!.truth).length ?? 0
+    let tier = s.rounds.count >= 4 && s.coffeeFixed ? 2 : s.rounds.count >= 2 ? 1 : 0
+    if (falseClaims > 0) tier = Math.max(0, tier - 1)
+    grade = ['B', 'A', 'S'][tier]
+    gradeNote = [
+      'The chair was watched. The building watched itself.',
+      'Solid. The building was walked, mostly, and the note holds up.',
+      'A proper night of rounds. The day crew finds everything exactly where your note says.',
+    ][tier]
+  }
 
   const trips = s.log.filter((l) => l.text.includes('ALARM [CRITICAL]')).length
   const sensorNotes = s.zones.flatMap((z) =>

@@ -5,7 +5,7 @@
 // return to the console. The shift clock never pauses while you are out here.
 
 import React, { useEffect, useRef } from 'react'
-import { ROUND_CHECKPOINTS } from './engine'
+import { clockLabel, ROUND_CHECKPOINTS } from './engine'
 import type { CracStatus, GameState } from './types'
 
 const W = 768
@@ -103,7 +103,7 @@ export default function FloorGame({ s, onRepair, onRepairPumps, onFixCoffee, onC
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
 
-    const player = { x: W / 2, y: 456 }
+    const player = { x: W / 2, y: 456, fx: 0, fy: -1, moving: false }
     let progress = 0
     let progressUnit: string | null = null
     let repaired = false // beep latch
@@ -146,6 +146,11 @@ export default function FloorGame({ s, onRepair, onRepairPumps, onFixCoffee, onC
       const ny = player.y + dy * SPEED * dt
       if (!hitsObstacle(nx, player.y)) player.x = nx
       if (!hitsObstacle(player.x, ny)) player.y = ny
+      player.moving = !!(dx || dy)
+      if (dx || dy) {
+        player.fx = dx
+        player.fy = dy
+      }
 
       // --- repair: any non-running CRAC within reach, or failed pumps at the CDU
       const near = st.cracs.find((c) => {
@@ -301,7 +306,11 @@ export default function FloorGame({ s, onRepair, onRepairPumps, onFixCoffee, onC
   return (
     <div className="ns-floorgame">
       <canvas ref={canvasRef} width={W} height={H} />
-      <div className="ns-floor-hint">WASD / ARROWS — MOVE · HOLD E — RESET UNIT · EXIT VIA THE BMS ROOM DOOR</div>
+      <div className="ns-floor-hint">
+        {s.night.quiet
+          ? 'WASD / ARROWS — MOVE · HOLD E AT A RINGED UNIT — LOG READINGS · CONSOLE VIA THE BMS ROOM DOOR'
+          : 'WASD / ARROWS — MOVE · HOLD E — RESET UNIT · EXIT VIA THE BMS ROOM DOOR'}
+      </div>
       {klaxon && <div className="ns-klaxon">A KLAXON ECHOES SOMEWHERE IN THE DARK.</div>}
       <div className="ns-dpad">
         <span />
@@ -327,7 +336,7 @@ const STATUS_COLOR: Record<CracStatus, string> = {
 function draw(
   ctx: CanvasRenderingContext2D,
   st: GameState,
-  player: { x: number; y: number },
+  player: { x: number; y: number; fx: number; fy: number; moving: boolean },
   nearId: string | null,
   progress: number,
   now: number,
@@ -397,6 +406,19 @@ function draw(
       ctx.fillStyle = `rgba(255,70,40,${(heat * 0.22).toFixed(3)})`
       ctx.fillRect(r.x - 4, r.y - 4, r.w + 8, r.h + 8)
     }
+    // the hot rack shimmers: heat haze wobbling off the one row that's cooking
+    if (st.hotRack && i === st.hotRack.row && !st.hotRack.fixed && st.hotRack.temp > 34) {
+      const hh = Math.min(1, (st.hotRack.temp - 34) / 24)
+      for (let k = 0; k < 3; k++) {
+        const sx = r.x + 20 + k * 70 + Math.sin(now / 75 + k * 2.1) * 3
+        const sy = r.y - 7 - Math.sin(now / 110 + k) * 2
+        ctx.strokeStyle = `rgba(255,120,80,${(0.22 * hh).toFixed(3)})`
+        ctx.beginPath()
+        ctx.moveTo(sx, sy + 4)
+        ctx.quadraticCurveTo(sx + 3, sy + 1, sx, sy - 2)
+        ctx.stroke()
+      }
+    }
     ctx.fillStyle = '#06180c'
     ctx.fillRect(r.x, r.y, r.w, r.h)
     ctx.strokeStyle = `rgba(${cr},${cg},${cb},${0.28 + heat * 0.5})`
@@ -448,6 +470,39 @@ function draw(
   ctx.font = '9px ui-monospace, monospace'
   ctx.fillText(st.coffeeFixed ? '☕' : '✕☕', COFFEE.x + 5, COFFEE.y + 20)
 
+  // a fixed coffee machine steams forever after — the reward stays visible
+  if (st.coffeeFixed) {
+    for (let i = 0; i < 2; i++) {
+      const p = ((now / 1900 + i * 0.5) % 1)
+      const wx = COFFEE.x + 10 + i * 9 + Math.sin(now / 300 + i * 2.4) * 2.5
+      const wy = COFFEE.y - 2 - p * 15
+      ctx.strokeStyle = `rgba(200,220,210,${(0.28 * (1 - p)).toFixed(3)})`
+      ctx.beginPath()
+      ctx.moveTo(wx, wy + 5)
+      ctx.quadraticCurveTo(wx + 2, wy + 2, wx, wy)
+      ctx.stroke()
+    }
+  }
+
+  // airflow motes: running CRACs breathe a few drifting specks toward their
+  // hall — supply direction, visible. The units that are down breathe nothing.
+  for (const c of st.cracs) {
+    if (c.status !== 'running') continue
+    const r = CRAC_POS[c.id]
+    const from = centre(r)
+    const hallCx = c.zone === 'A' ? 190 : 580
+    const dirx = hallCx - from.x
+    const diry = 240 - from.y
+    const len = Math.hypot(dirx, diry)
+    for (let i = 0; i < 4; i++) {
+      const p = ((now / 2600 + i * 0.25 + from.x * 0.001) % 1)
+      const mx = from.x + (dirx / len) * 110 * p + Math.sin(now / 500 + i * 1.9) * 3
+      const my = from.y + (diry / len) * 110 * p
+      ctx.fillStyle = `rgba(120,220,255,${(0.32 * (1 - p)).toFixed(3)})`
+      ctx.fillRect(mx, my, 1.6, 1.6)
+    }
+  }
+
   // door
   ctx.strokeStyle = 'rgba(255,179,71,0.9)'
   ctx.strokeRect(DOOR.x + 0.5, DOOR.y + 0.5, DOOR.w, DOOR.h)
@@ -455,19 +510,59 @@ function draw(
   ctx.font = '10px ui-monospace, monospace'
   ctx.fillText('BMS ROOM', DOOR.x + 14, DOOR.y + 18)
 
-  // player
-  ctx.fillStyle = '#4cf07a'
+  // player — a top-down human, which is to say: a head, shoulders, and a
+  // hi-vis rim, bobbing slightly when walking. Among Us taught the lesson:
+  // charm comes from body language, not anatomy.
+  const bob = player.moving ? Math.sin(now / 90) * 1.1 : 0
+  const py = player.y + bob
+  const angle = Math.atan2(player.fy, player.fx)
+  ctx.save()
+  ctx.translate(player.x, py)
+  ctx.rotate(angle)
+  ctx.fillStyle = '#1d6b3c' // shoulders, a step darker than the head
   ctx.beginPath()
-  ctx.arc(player.x, player.y, PLAYER_R, 0, Math.PI * 2)
+  ctx.ellipse(0, 0, 6, 9.5, 0, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.restore()
+  ctx.strokeStyle = 'rgba(255,179,71,0.55)' // hi-vis rim: only worker on site
+  ctx.beginPath()
+  ctx.arc(player.x, py, PLAYER_R + 2.5, 0, Math.PI * 2)
+  ctx.stroke()
+  ctx.fillStyle = '#4cf07a' // the head, nudged toward where you are looking
+  ctx.beginPath()
+  ctx.arc(player.x + player.fx * 1.6, py + player.fy * 1.6, PLAYER_R - 1, 0, Math.PI * 2)
   ctx.fill()
 
-  // darkness + torch
-  const g = ctx.createRadialGradient(player.x, player.y, LIGHT_R * 0.25, player.x, player.y, LIGHT_R * 1.9)
+  // darkness + torch: held in the hand, so the light leads your facing, and
+  // it flickers the way real torches insist on doing
+  const flick = 1 + 0.03 * Math.sin(now / 57) + 0.02 * Math.sin(now / 131)
+  const lx = player.x + player.fx * 20
+  const ly = py + player.fy * 20
+  const g = ctx.createRadialGradient(lx, ly, LIGHT_R * 0.25 * flick, lx, ly, LIGHT_R * 1.9 * flick)
   g.addColorStop(0, 'rgba(0,0,0,0)')
   g.addColorStop(0.45, 'rgba(0,0,0,0.55)')
   g.addColorStop(1, 'rgba(0,0,0,0.955)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, W, H)
+
+  // rain, visible: faint streaks falling through the torchlight while the
+  // roof is getting drummed. You already hear it; now the light catches it.
+  if (st.night.quiet && st.raining) {
+    for (let i = 0; i < 26; i++) {
+      const seedX = (i * 137 + Math.floor(now / 340) * 61) % W
+      const fall = ((now / 340 + i * 0.37) % 1)
+      const rx = (seedX + i * 7) % W
+      const ry = fall * H
+      const d = Math.hypot(rx - player.x, ry - py)
+      if (d > LIGHT_R * 1.35) continue
+      const a = 0.16 * (1 - d / (LIGHT_R * 1.35))
+      ctx.strokeStyle = `rgba(170,210,230,${a.toFixed(3)})`
+      ctx.beginPath()
+      ctx.moveTo(rx, ry)
+      ctx.lineTo(rx - 2, ry + 7)
+      ctx.stroke()
+    }
+  }
 
   // fault LEDs punch through the dark
   for (const c of st.cracs) {
@@ -478,6 +573,26 @@ function draw(
     ctx.beginPath()
     ctx.arc(p.x, p.y, 4, 0, Math.PI * 2)
     ctx.fill()
+  }
+
+  // quiet-mode checkpoint rings: while a round is open, every unlogged unit
+  // wears a soft breathing ring that punches through the dark — the clipboard
+  // knows where its checkboxes are, so the player does too
+  if (st.night.quiet && st.rounds.count < 4 && st.t - st.rounds.lastAt >= 50) {
+    const breathe = 0.28 + 0.18 * Math.sin(now / 420)
+    ctx.strokeStyle = `rgba(255,179,71,${breathe})`
+    ctx.lineWidth = 2
+    ctx.setLineDash([5, 5])
+    for (const id of ROUND_CHECKPOINTS) {
+      if (st.rounds.visited.includes(id)) continue
+      const r = id === 'CDU' ? CDU : CRAC_POS[id]
+      const p = centre(r)
+      ctx.beginPath()
+      ctx.arc(p.x, p.y, Math.max(r.w, r.h) / 2 + 12, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    ctx.setLineDash([])
+    ctx.lineWidth = 1
   }
 
   // failed-pump LED at the CDU punches through the dark
@@ -531,7 +646,7 @@ function draw(
       ? `ROUND ${st.rounds.count + 1}/4 · READINGS LOGGED ${st.rounds.visited.length}/5 — HOLD E AT EACH UNIT`
       : st.rounds.count >= 4
         ? 'ROUNDS COMPLETE — THE FLOOR IS YOURS'
-        : `NEXT ROUND OPENS SOON — ENJOY THE ${st.raining ? 'RAIN' : 'QUIET'}`
+        : `NEXT ROUND DUE ~${clockLabel(st.rounds.lastAt + 50)} — UNTIL THEN, ENJOY THE ${st.raining ? 'RAIN' : 'QUIET'}`
     : lk && !lk.resolved && !lk.revealed
       ? 'LEAK ROPE WET — INSPECT THE CDU (HALL B, BOTTOM AISLE)'
       : sm && !sm.resolved && !sm.revealed
@@ -542,6 +657,16 @@ function draw(
             ? 'ALL PLANT RUNNING — RETURN TO THE BMS ROOM'
             : `FAULTED: ${[...faulted.map((c) => c.id), ...failedPumps.map((p) => `${p.id} (CDU)`)].join(', ')}`
   ctx.fillText(objective, 12, 18)
+
+  // the gate buzzer is a doorbell, not BMS telemetry — you can know someone
+  // is waiting without seeing a single sensor. Answering still means walking
+  // back: the choice stays yours, only the information is honest now.
+  if (st.door) {
+    const waited = Math.floor(st.t - st.door.arrivedAt)
+    const pulse = 0.55 + 0.35 * Math.sin(now / 260)
+    ctx.fillStyle = `rgba(255,179,71,${pulse})`
+    ctx.fillText(`⚿ SOMEONE AT THE GATE · ${waited}m — ANSWER FROM THE CONSOLE`, 12, 34)
+  }
 
   // quiet rounds: a small tick over every checkpoint already logged this round
   if (st.night.quiet && roundOpen) {
