@@ -209,7 +209,7 @@ function EopDrawer({
           )
         })}
       </ol>
-      <div className="ns-eop-foot">The procedure gives you the steps. The judgment is still yours.</div>
+      <div className="ns-eop-foot">○ checks itself off against the live board · — happens in your head, where the console can&rsquo;t follow · The judgment is still yours.</div>
     </div>
   )
 }

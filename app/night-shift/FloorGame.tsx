@@ -367,6 +367,24 @@ function draw(
     ctx.strokeRect(wl.x + 0.5, wl.y + 0.5, wl.w, wl.h)
   }
 
+  // doorways get blueprint door-swing arcs — the floor plan's native notation.
+  // Purely drawn: your badge opens everything, so nothing ever stops you.
+  ctx.strokeStyle = 'rgba(130,160,140,0.28)'
+  ctx.lineWidth = 1
+  const doorArc = (hx: number, hy: number, r: number, a0: number, a1: number) => {
+    ctx.beginPath()
+    ctx.arc(hx, hy, r, a0, a1)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(hx, hy)
+    ctx.lineTo(hx + Math.cos(a1) * r, hy + Math.sin(a1) * r)
+    ctx.stroke()
+  }
+  doorArc(324, 72, 72, Math.PI / 2, Math.PI) // Hall A door, swings into the hall
+  doorArc(444, 72, 72, 0, Math.PI / 2) // Hall B door, mirrored
+  doorArc(364, 67, 40, -Math.PI / 2, 0) // break-room door, swings inward
+  doorArc(356, 427, 56, 0, Math.PI / 2) // BMS-room door, swings inward
+
   // hall + room labels
   ctx.fillStyle = 'rgba(76,240,122,0.10)'
   ctx.font = '700 26px ui-monospace, monospace'
