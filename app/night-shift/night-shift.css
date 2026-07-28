@@ -462,3 +462,16 @@
   }
   .ns-poweron { display: none; }
 }
+
+/* ===== alarm list: active on top, history folded, never buries ASSIST ===== */
+.ns-alarm-list {
+  max-height: 380px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.ns-acked-toggle {
+  display: block;
+  width: 100%;
+  margin: 6px 0;
+  color: var(--ns-dim);
+}

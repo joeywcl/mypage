@@ -752,6 +752,7 @@ export default function NightShift() {
   const [s, dispatch] = useReducer(reducer, undefined, () => initialState())
   const [muted, setMuted] = useState(false)
   const [hints, setHints] = useState(true)
+  const [showAcked, setShowAcked] = useState(false)
   const [eopView, setEopView] = useState<{ eopId: string; alarmId: number } | null>(null)
   const { beep, ensure, setTone, stopTone, stopAllTones, setRain, stopRain } = useBeeper(muted)
   const prev = useRef({ critCount: 0, warnCount: 0, recCount: 0, doorId: 0, doorBuzzT: 0 })
@@ -955,10 +956,13 @@ export default function NightShift() {
       <div className="ns-grid">
         <div>
           <div className="ns-panel">
-            <div className="ns-panel-title">ALARMS ({unacked.length} UNACKED)</div>
-            <div className="ns-panel-body">
+            <div className="ns-panel-title">ALARMS ({unacked.length} ACTIVE · {s.alarms.length - unacked.length} ACKED)</div>
+            <div className="ns-panel-body ns-alarm-list">
               {s.alarms.length === 0 && <div style={{ color: 'var(--ns-dim)' }}>No alarms. Enjoy it while it lasts.</div>}
-              {s.alarms.slice(0, 12).map((a) => (
+              {/* real BMS consoles split ACTIVE from HISTORY: unacked alarms are
+                  the job and stay on screen; acked ones are the audit trail and
+                  fold away so live panels (ASSIST) never sink below them */}
+              {unacked.map((a) => (
                 <AlarmRow
                   key={a.id}
                   a={a}
@@ -966,6 +970,20 @@ export default function NightShift() {
                   onEop={() => a.eop && setEopView({ eopId: a.eop, alarmId: a.id })}
                 />
               ))}
+              {s.alarms.length - unacked.length > 0 && (
+                <button className="ns-btn ns-acked-toggle" onClick={() => setShowAcked((v) => !v)}>
+                  {showAcked ? 'HIDE' : 'SHOW'} {s.alarms.length - unacked.length} ACKNOWLEDGED
+                </button>
+              )}
+              {showAcked &&
+                s.alarms.filter((a) => a.acked).slice(0, 20).map((a) => (
+                  <AlarmRow
+                    key={a.id}
+                    a={a}
+                    onAck={() => {}}
+                    onEop={() => a.eop && setEopView({ eopId: a.eop, alarmId: a.id })}
+                  />
+                ))}
               {hints && s.alarms.length > 0 && (
                 <div className="ns-help">New to the board? Every alarm carries an EOP tag — the procedure that tells you what to do next. Open it. That&rsquo;s what it&rsquo;s for.</div>
               )}
