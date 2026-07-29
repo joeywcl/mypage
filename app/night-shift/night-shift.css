@@ -2,9 +2,9 @@
 
 .ns-root {
   --ns-bg: #050a06;
-  --ns-panel: #081108;
+  --ns-panel: #0a150c;
   --ns-green: #4cf07a;
-  --ns-dim: #2a7a44;
+  --ns-dim: #3c9457;
   --ns-amber: #ffb347;
   --ns-red: #ff5c5c;
   --ns-line: rgba(76, 240, 122, 0.22);
@@ -50,7 +50,7 @@
   flex-wrap: wrap;
 }
 .ns-title { font-weight: 700; letter-spacing: 3px; }
-.ns-clock { font-size: 20px; font-weight: 700; letter-spacing: 2px; }
+.ns-clock { font-size: 20px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 7px rgba(76, 240, 122, 0.4); }
 .ns-header .ns-spacer { flex: 1; }
 .ns-door-flag { animation: ns-blink 1.1s step-end infinite; font-weight: 700; }
 
@@ -74,15 +74,18 @@
 
 .ns-panel {
   border: 1px solid var(--ns-line);
+  border-top-color: rgba(76, 240, 122, 0.38); /* lit top edge: the panel is ON */
   background: var(--ns-panel);
   margin-bottom: 12px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
 }
 .ns-panel-title {
   padding: 6px 10px;
   border-bottom: 1px solid var(--ns-line);
   letter-spacing: 2px;
   font-size: 11px;
-  color: var(--ns-dim);
+  color: var(--ns-green);
+  background: rgba(76, 240, 122, 0.06); /* title strip: a landing point per panel */
 }
 .ns-panel-body { padding: 10px; }
 
@@ -106,7 +109,8 @@
 /* zones */
 .ns-zone { margin-bottom: 10px; }
 .ns-zone-top { display: flex; align-items: baseline; gap: 12px; }
-.ns-temp { font-size: 30px; font-weight: 700; }
+.ns-temp { font-size: 30px; font-weight: 700; text-shadow: 0 0 8px rgba(76, 240, 122, 0.45); }
+.ns-temp.warn, .ns-temp.crit { text-shadow: 0 0 8px currentColor; }
 .ns-temp.warn { color: var(--ns-amber); }
 .ns-temp.crit { color: var(--ns-red); }
 .ns-zone-status { letter-spacing: 1px; font-size: 11px; }
@@ -307,7 +311,7 @@
 .ns-brief p { margin: 0 0 10px; }
 .ns-brief strong { color: var(--ns-amber); font-weight: 700; }
 
-.ns-grade { font-size: 64px; font-weight: 700; line-height: 1; }
+.ns-grade { font-size: 64px; font-weight: 700; line-height: 1; text-shadow: 0 0 16px currentColor; }
 .ns-grade.good { color: var(--ns-green); }
 .ns-grade.mid { color: var(--ns-amber); }
 .ns-grade.bad { color: var(--ns-red); }
